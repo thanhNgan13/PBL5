@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "138271755735",
+    "project_id": "fire-warning-system-2d9c2",
+    "storage_bucket": "fire-warning-system-2d9c2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:138271755735:android:bf37f0d5f22c300e2e8f92",
+        "android_client_info": {
+          "package_name": "com.example.fire_warning_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSiBTRnU7u3aQee9-b2MhzCS6_dlHJsfE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
