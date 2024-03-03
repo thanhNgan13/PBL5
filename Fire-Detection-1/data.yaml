@@ -1,0 +1,7 @@
+names:
+- '0'
+nc: 1
+test: ../Fire-Detection-1/images/test
+train: ../Fire-Detection-1/images/train
+val: ../Fire-Detection-1/images/valid
+is_coco: False
