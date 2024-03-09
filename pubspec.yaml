@@ -37,6 +37,7 @@ dependencies:
   firebase_core: ^2.25.5
   cloud_firestore: 4.15.5
   http: 1.2.0
+  multicast_dns: ^0.3.2+6
 
 dev_dependencies:
   flutter_test:
