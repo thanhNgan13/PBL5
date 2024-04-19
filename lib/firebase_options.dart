@@ -54,6 +54,7 @@ class DefaultFirebaseOptions {
     appId: '1:138271755735:android:bf37f0d5f22c300e2e8f92',
     messagingSenderId: '138271755735',
     projectId: 'fire-warning-system-2d9c2',
+    databaseURL: 'https://fire-warning-system-2d9c2-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'fire-warning-system-2d9c2.appspot.com',
   );
 
@@ -62,6 +63,7 @@ class DefaultFirebaseOptions {
     appId: '1:138271755735:ios:4f328cbab0aee6982e8f92',
     messagingSenderId: '138271755735',
     projectId: 'fire-warning-system-2d9c2',
+    databaseURL: 'https://fire-warning-system-2d9c2-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'fire-warning-system-2d9c2.appspot.com',
     iosBundleId: 'com.example.fireWarningApp',
   );
