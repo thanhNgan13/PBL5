@@ -1,4 +1,6 @@
+import 'package:fire_warning_app/component/BottomNavItem.dart';
 import 'package:fire_warning_app/pages/homepage_widgets/home_widget.dart';
+import 'package:fire_warning_app/pages/homepage_widgets/notification_widget.dart';
 import 'package:fire_warning_app/pages/homepage_widgets/option_widget.dart';
 import 'package:fire_warning_app/pages/homepage_widgets/personal_widget.dart';
 import 'package:flutter/material.dart';
@@ -6,15 +8,16 @@ import '../model/Account.dart';
 import 'homepage_widgets/contact_widget.dart';
 
 class HomePage extends StatelessWidget {
-   const HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return const Scaffold(
       body: BodyWidget(),
     );
   }
 }
+
 class BodyWidget extends StatefulWidget {
   const BodyWidget({super.key});
 
@@ -23,54 +26,56 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
-  int _currentIndex=0;
-  final tabs=[
-    HomeWidget(),
-    ContactWidget(),
-    OptionWidget(),
-    Container(
-      child: Center(
-        child: Text('notification'),
-      ),
-    ),
-    PersonalWidget(),
+  int _selectedIndex = 0;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  final List<Widget> _tabs = [
+    const HomeWidget(),
+    const ContactWidget(),
+    const OptionWidget(),
+    const NotificationWidget(),
+    const PersonalWidget(),
+  ];
+
+  final List<BottomNavItem> bottomNavItems = [
+    BottomNavItem(
+        icon: const Icon(
+          Icons.home_rounded,
+        ),
+        label: 'Trang chủ'),
+    BottomNavItem(
+        icon: const Icon(Icons.account_box_rounded), label: 'Danh bạ'),
+    BottomNavItem(
+        icon: const Icon(Icons.space_dashboard_rounded), label: 'Tùy chọn'),
+    BottomNavItem(
+        icon: const Icon(Icons.notifications_rounded), label: 'Thông báo'),
+    BottomNavItem(icon: const Icon(Icons.person_rounded), label: 'Cá nhân')
   ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: tabs[_currentIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _tabs,
+      ),
       bottomNavigationBar: BottomNavigationBar(
-        fixedColor: Color(0xffDC4A48),
+        fixedColor: const Color(0xffDC4A48),
         type: BottomNavigationBarType.fixed,
-          iconSize: 30,
-          items: [
+        unselectedFontSize: 15,
+        selectedFontSize: 15,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: [
+          for (var i = 0; i < bottomNavItems.length; i++)
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Trang chủ',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_box),
-              label: 'Danh bạ',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.space_dashboard),
-              label: 'Tùy chọn',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.notifications),
-              label: 'Thông báo',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Cá nhân',
-            ),
-          ],
-          currentIndex: _currentIndex,
-          onTap:(index){
-            setState((){
-              _currentIndex=index;
-            });
-          }
+              icon: bottomNavItems.elementAt(i).icon,
+              label: bottomNavItems.elementAt(i).label,
+            )
+        ],
       ),
     );
   }

@@ -1,4 +1,4 @@
-import 'package:fire_warning_app/pages/home/VideoPages/VideoOverplay.dart';
+import 'package:fire_warning_app/pages/IoT/VideoPages/VideoOverplay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';

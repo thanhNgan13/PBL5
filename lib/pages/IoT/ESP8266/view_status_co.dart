@@ -1,4 +1,4 @@
-import 'package:fire_warning_app/pages/home/ESP8266/co_model.dart';
+import 'package:fire_warning_app/pages/IoT/ESP8266/co_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
