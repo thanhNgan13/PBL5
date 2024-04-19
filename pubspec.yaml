@@ -44,6 +44,8 @@ dependencies:
   percent_indicator: ^4.2.3
   url_launcher: ^6.2.5
   flutter_phone_direct_caller: ^2.1.1
+  multicast_dns: ^0.3.2+6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
