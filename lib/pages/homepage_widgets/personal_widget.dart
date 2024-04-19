@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../login_page.dart';
 class PersonalWidget extends StatelessWidget {
@@ -69,10 +70,8 @@ class _BodyWidgetState extends State<BodyWidget> {
               ),
               TextButton(
                 onPressed:(){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                  );
+                  disposeAccountData();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()),);
                 },
                 child: Text("Đăng xuất",
                   style: TextStyle(fontSize: 24, color: Colors.white,),
@@ -87,5 +86,13 @@ class _BodyWidgetState extends State<BodyWidget> {
           ),
         ),
     );
+  }
+  Future<void> disposeAccountData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool("USER_IS_LOGGED", false);
+    await prefs.remove('USER_IS_LOGGED');
+    await prefs.remove('USER_PHONE');
+    await prefs.remove('USER_CODE');
+
   }
 }

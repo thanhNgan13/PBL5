@@ -1,8 +1,20 @@
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
+import '../model/Account.dart';
+import '../model/register_model.dart';
 import 'validators/register_valid.dart';
-class RegisterBloc
+
+abstract class RegisterInterface{
+  void registerSuccess();
+  void registerError(dynamic error);
+}
+
+class RegisterPresenter
 {
+  RegisterInterface? interface;
+
+  final RegisterModel _model = RegisterModel();
+
   final _nameSubject=BehaviorSubject<String>();//contains data for name field
   final _phoneSubject=BehaviorSubject<String>();
   final _codeSubject=BehaviorSubject<String>();
@@ -36,7 +48,9 @@ class RegisterBloc
   Stream<bool> get btnStream => _btnSubject.stream;
   Sink<bool> get btnSink => _btnSubject.sink;
 
-  RegisterBloc() {
+  RegisterPresenter(RegisterInterface interface) {
+    this.interface=interface;
+
     Rx.combineLatest3(_nameSubject,_phoneSubject,_codeSubject,(name,phone,code){
       return RegisterValidation.validateName(name)=="" &&
           RegisterValidation.validatePhone(phone)=="" &&
@@ -47,6 +61,21 @@ class RegisterBloc
 
   }
 
+  Future<void> register(Account account) async {
+    if(await _model.isExistingPhone(account.phone) == true){
+        interface?.registerError("Số điện thoại đã được đăng ký");
+    }
+    else{
+      if(await _model.addAccount(account)==true ){
+        interface?.registerSuccess();
+      }
+      else{
+        interface?.registerError("");
+      }
+    }
+
+
+  }
 
   dispose()
   {

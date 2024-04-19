@@ -1,9 +1,19 @@
 import 'dart:async';
-import 'package:fire_warning_app/blocs/validators/login_valid.dart';
+import 'package:fire_warning_app/model/Account.dart';
+import 'package:fire_warning_app/presenters/validators/login_valid.dart';
 import 'package:rxdart/rxdart.dart';
 
-class LoginBloc
+import '../model/login_model.dart';
+abstract class LoginInterface{
+  void loginSuccess();
+  void loginError(dynamic error);
+}
+class LoginPresenter
 {
+  LoginInterface? interface;
+
+  final LoginModel _model=LoginModel();
+
   final _phoneSubject=BehaviorSubject<String>();
   final _codeSubject=BehaviorSubject<String>();
   final _btnSubject=BehaviorSubject<bool>();
@@ -28,7 +38,9 @@ class LoginBloc
   Stream<bool> get btnStream => _btnSubject.stream;
   Sink<bool> get btnSink => _btnSubject.sink;
 
-  LoginBloc() {
+  LoginPresenter(LoginInterface interface) {
+    this.interface=interface;
+
     Rx.combineLatest2(_phoneSubject,_codeSubject,(phone,code){
       return LoginValidation.validatePhone(phone)=="" &&
           LoginValidation.validateCode(code)=="";
@@ -37,6 +49,23 @@ class LoginBloc
     });
 
   }
+
+  Future<void> login(String phone,String code) async {
+      int loginCase=await _model.login(phone, code);
+      switch(loginCase){
+        case 0:
+          interface?.loginError("Lỗi");
+        case 1:
+          interface?.loginError("Mã đăng ký không tồn tại");
+        case 2:
+          interface?.loginError("Số điện thoại chưa đăng ký tài khoản");
+        case 3:
+          interface?.loginError("Kiểm tra lại số điện thoại hoặc mã đăng ký");
+        case 4:
+          interface?.loginSuccess();
+      }
+  }
+
   dispose()
   {
     _phoneSubject.close();

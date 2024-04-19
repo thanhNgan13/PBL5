@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:fire_warning_app/pages/homepage_widgets/button_alert_widget.dart';
 import 'package:flutter/material.dart';
 class HomeWidget extends StatelessWidget {
@@ -18,39 +19,31 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xffDC4A48),
+        automaticallyImplyLeading: false,//not showing button back
+      title: Row(
+        children: [
+          ImageIcon(AssetImage("assets/icons/hello.png"),),
+          SizedBox(width: 20,),
+          Column(
+            children: [
+              Text('Xin chào',style:TextStyle(fontSize: 15, color: Colors.white)),
+           //   Text('Linda',style:TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold))
+            ],
+          ),
+        ]
+
+      ),
+      ),
       body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              /*
-              //top bar
-              Container(
-                color: Colors.blue,
-                height: 80,
-                child: Stack(
-                  alignment: AlignmentDirectional.bottomCenter,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          children: [
-                            ImageIcon(AssetImage("assets/icons/hello.png"),),
-                            Text("Xin chào,",style:TextStyle(fontSize: 13, color: Colors.black),)
-                          ],
-                        ),
-                        Text("Linda",style:TextStyle(fontSize: 17, color: Colors.black, fontWeight: FontWeight.bold),)
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 30,),
-
-               */
               Text("Có cháy?",style:TextStyle(fontSize: 24, color: Colors.black,fontWeight: FontWeight.bold),),
               SizedBox(height: 50,),
               Text("Chạm và giữ 10 giây để gửi cảnh báo đến người thân",style:TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold),),

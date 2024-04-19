@@ -1,7 +1,9 @@
 import 'package:fire_warning_app/pages/register_page.dart';
 import 'package:fire_warning_app/pages/home_page.dart';
 import 'package:flutter/material.dart';
-import '../blocs/login_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../model/Account.dart';
+import '../presenters/login_presenter.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -20,30 +22,34 @@ class BodyWidget extends StatefulWidget {
   State<BodyWidget> createState() => _BodyWidgetState();
 }
 
-class _BodyWidgetState extends State<BodyWidget> {
+class _BodyWidgetState extends State<BodyWidget> implements LoginInterface{
+  late LoginPresenter loginPresenter;
+
   final phoneController=TextEditingController();
   final codeController=TextEditingController();
 
-  final loginBloc=LoginBloc();
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
+    loginPresenter=LoginPresenter(this);
+
     //listen textchange of TextFormField
     phoneController.addListener(() {
-      loginBloc.phoneSink.add(phoneController.text);
+      loginPresenter.phoneSink.add(phoneController.text);
     });
 
     codeController.addListener(() {
-      loginBloc.codeSink.add(codeController.text);
+      loginPresenter.codeSink.add(codeController.text);
     });
   }
   @override
   void dispose() {
     super.dispose();
-    loginBloc.dispose();
+    loginPresenter.dispose();
   }
 
   @override
@@ -64,7 +70,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
                   child: StreamBuilder<String>(
-                      stream: loginBloc.phoneStream,
+                      stream: loginPresenter.phoneStream,
                       builder: (context, snapshot) {
                         return TextFormField(
                           controller: phoneController,
@@ -84,7 +90,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                     alignment: AlignmentDirectional.centerEnd,
                     children: [
                       StreamBuilder<String>(
-                          stream: loginBloc.codeStream,
+                          stream: loginPresenter.codeStream,
                           builder: (context, snapshot) {
                             return TextFormField(
                               controller:codeController,
@@ -124,16 +130,12 @@ class _BodyWidgetState extends State<BodyWidget> {
                   SizedBox(
                     width: 200,
                     child: StreamBuilder<bool>(
-                        stream: loginBloc.btnStream,
+                        stream: loginPresenter.btnStream,
                         builder: (context, snapshot) {
                           Color backgroundColor = snapshot.data == true ? Color(0xffDC4A48) : Colors.grey;
                           return TextButton(
                             onPressed: snapshot.data==true?() {
-                              print("click button");
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => HomePage()),
-                              );
+                              clickLogin(phoneController.text.toString(),codeController.text.toString());
                             }:null,
                             child: Text("Đăng nhập",
                               style: TextStyle(fontSize: 24, color: Colors.white,),
@@ -165,5 +167,34 @@ class _BodyWidgetState extends State<BodyWidget> {
         ],
       ),
     );
+  }
+
+  @override
+  void loginError(error) {
+    // TODO: implement loginError
+    if (error is String) {
+      showDialog(context: context,
+        builder: (BuildContext context) {
+          return MyAlertDialog(content: error.toString());
+        },
+      );
+    }
+  }
+
+  @override
+  Future<void> loginSuccess() async {
+    // TODO: implement loginSuccess
+        //save on the shared preferences that the user is logged in
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool("USER_IS_LOGGED", true);
+    await prefs.setString("USER_PHONE", phoneController.text);
+    await prefs.setString("USER_CODE", codeController.text);
+
+
+    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()),);
+  }
+
+  void clickLogin(String phone, String code) {
+    loginPresenter.login(phone,code);
   }
 }

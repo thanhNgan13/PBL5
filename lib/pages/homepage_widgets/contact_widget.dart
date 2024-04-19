@@ -1,9 +1,12 @@
+import 'package:fire_warning_app/presenters/contact_widget_presenter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../model/Account.dart';
 import '../../model/Contact.dart';
 class ContactWidget extends StatelessWidget {
+  //final Account accountData;
   const ContactWidget({super.key});
 
   @override
@@ -20,21 +23,28 @@ class BodyWidget extends StatefulWidget {
   State<BodyWidget> createState() => _BodyWidgetState();
 }
 
-class _BodyWidgetState extends State<BodyWidget> {
+class _BodyWidgetState extends State<BodyWidget> implements ContactWidgetInterface{
   List<Contact> listContact=[];
+  
+  late ContactWidgetPresenter contactWidgetPresenter;
+  
   @override
   void initState() {
     super.initState();
+    contactWidgetPresenter=ContactWidgetPresenter(this);
     addData();
   }
   void addData()
   {
+   // listContact=contactWidgetPresenter.getListContact(widget.accountData.phone) as List<Contact>;
+
     Contact contact0=Contact("Chữa cháy","114");
     Contact contact1=Contact("Bố","0321456321");
     Contact contact2=Contact("Mẹ","0363604563");
     listContact.add(contact0);
     listContact.add(contact1);
     listContact.add(contact2);
+
   }
 
   @override
@@ -44,7 +54,8 @@ class _BodyWidgetState extends State<BodyWidget> {
         child: Column(
             children: [
               SizedBox(height: 30,),
-              Text("Liên hệ khẩn cấp",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold,color: Colors.black),),
+            //  Text("Liên hệ khẩn cấp",style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.black),),
+              Text("Danh sách thành viên",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold,color: Colors.black),),
               Row(
                 children: [
                   IconButton(onPressed: (){

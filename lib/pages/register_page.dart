@@ -1,5 +1,7 @@
+import 'package:fire_warning_app/pages/register_success_page.dart';
 import 'package:flutter/material.dart';
-import 'package:fire_warning_app/blocs/register_bloc.dart';
+import '../model/Account.dart';
+import '../presenters/register_presenter.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
@@ -19,36 +21,38 @@ class BodyWidget extends StatefulWidget {
   State<BodyWidget> createState() => _BodyWidgetState();
 }
 
-class _BodyWidgetState extends State<BodyWidget> {
+class _BodyWidgetState extends State<BodyWidget> implements RegisterInterface {
+  late RegisterPresenter registerPresenter;
+
   final nameController=TextEditingController();
   final phoneController=TextEditingController();
   final codeController=TextEditingController();
 
-  final registerBloc=RegisterBloc();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    registerPresenter=RegisterPresenter(this);
 
     //listen textchange of TextFormField
     nameController.addListener(() {
-      registerBloc.nameSink.add(nameController.text);
+      registerPresenter.nameSink.add(nameController.text);
     });
 
     phoneController.addListener(() {
-      registerBloc.phoneSink.add(phoneController.text);
+      registerPresenter.phoneSink.add(phoneController.text);
     });
 
     codeController.addListener(() {
-      registerBloc.codeSink.add(codeController.text);
+      registerPresenter.codeSink.add(codeController.text);
     });
   }
 
   @override
   void dispose() {
     super.dispose();
-    registerBloc.dispose();
+    registerPresenter.dispose();
   }
 
   @override
@@ -69,7 +73,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
                     child: StreamBuilder<String>( //user StreamBuilder to set valid to errorText from bloc
-                      stream: registerBloc.nameStream,
+                      stream: registerPresenter.nameStream,
                       builder: (context, snapshot) {
                         return TextFormField(
                           controller: nameController,
@@ -83,7 +87,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
                     child: StreamBuilder<String>(
-                      stream: registerBloc.phoneStream,
+                      stream: registerPresenter.phoneStream,
                       builder: (context, snapshot) {
                         return TextFormField(
                           controller: phoneController,
@@ -103,7 +107,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                       alignment: AlignmentDirectional.centerEnd,
                       children: [
                         StreamBuilder<String>(
-                          stream: registerBloc.codeStream,
+                          stream: registerPresenter.codeStream,
                           builder: (context, snapshot) {
                             return TextFormField(
                               controller:codeController,
@@ -140,12 +144,12 @@ class _BodyWidgetState extends State<BodyWidget> {
                     SizedBox(
                       width: 200,
                       child: StreamBuilder<bool>(
-                        stream: registerBloc.btnStream,
+                        stream: registerPresenter.btnStream,
                         builder: (context, snapshot) {
                           Color backgroundColor = snapshot.data == true ? Color(0xffDC4A48) : Colors.grey;
                           return TextButton(
                             onPressed: snapshot.data==true?() {
-                              print("click button");
+                              clickRegister(nameController.text.toString(),phoneController.text.toString(),codeController.text.toString());
                             }:null,
                             child: Text("Đăng ký",
                               style: TextStyle(fontSize: 24, color: Colors.white,),
@@ -167,6 +171,51 @@ class _BodyWidgetState extends State<BodyWidget> {
             ),
           ],
       ),
+    );
+  }
+  
+
+  @override
+  void registerSuccess() {
+    // TODO: implement registerSucess
+    Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterSuccessPage()),);
+  }
+
+  void clickRegister(String name, String phone, String code) {
+    Account account= new Account(name,phone,code);
+    registerPresenter.register(account);
+  }
+
+  @override
+  void registerError(dynamic error) {
+    // TODO: implement registerError
+    if (error is String) {
+        showDialog(context: context,
+            builder: (BuildContext context) {
+              return MyAlertDialog(content: error.toString());
+            },
+        );
+    }
+  }
+}
+class MyAlertDialog extends StatelessWidget {
+  final String content;
+  MyAlertDialog({
+    required this.content,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Đăng ký tài khoản không thành công'),
+      content: Text(content),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(); // Đóng thông báo nổi
+          },
+          child: Text('OK'),
+        ),
+      ],
     );
   }
 }

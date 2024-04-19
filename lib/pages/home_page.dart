@@ -2,10 +2,11 @@ import 'package:fire_warning_app/pages/homepage_widgets/home_widget.dart';
 import 'package:fire_warning_app/pages/homepage_widgets/option_widget.dart';
 import 'package:fire_warning_app/pages/homepage_widgets/personal_widget.dart';
 import 'package:flutter/material.dart';
+import '../model/Account.dart';
 import 'homepage_widgets/contact_widget.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
