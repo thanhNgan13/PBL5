@@ -1,4 +1,4 @@
-import 'package:fire_warning_app/pages/home/VideoPages/landspace_video.dart';
+import 'package:fire_warning_app/pages/IoT/VideoPages/landspace_video.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
