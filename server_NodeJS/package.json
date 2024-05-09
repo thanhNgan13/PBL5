@@ -1,0 +1,19 @@
+{
+  "name": "server_nodejs",
+  "version": "1.0.0",
+  "description": "Server to stream video from ESP32_CAM",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.18.2",
+    "firebase": "^10.11.1",
+    "firebase-admin": "^12.1.0",
+    "path": "^0.12.7",
+    "ws": "^7.5.7"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "thanhNgan13",
+  "license": "ISC"
+}

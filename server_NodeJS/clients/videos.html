@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ESP32 Stream</title>
+    <style>
+      img {
+        width: 100%; /* or any other styling you need */
+      }
+    </style>
+  </head>
+  <body>
+    <img id="videoStream" src="" />
+    <script>
+      const img = document.getElementById("videoStream");
+      const ws = new WebSocket("ws://192.168.1.3:8999/display");
+      ws.onmessage = function (event) {
+        const url = URL.createObjectURL(event.data);
+        img.src = url;
+      };
+
+      ws.onerror = function (error) {
+        console.error("WebSocket Error: ", error);
+      };
+
+      ws.onclose = function () {
+        console.log("WebSocket connection closed");
+      };
+    </script>
+  </body>
+</html>
