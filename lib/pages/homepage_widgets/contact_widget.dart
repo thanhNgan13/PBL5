@@ -1,9 +1,6 @@
-import 'package:fire_warning_app/presenters/contact_widget_presenter.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:fire_warning_app/presenters/contact_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../model/Account.dart';
 import '../../model/Contact.dart';
 class ContactWidget extends StatelessWidget {
   //final Account accountData;
@@ -23,39 +20,44 @@ class BodyWidget extends StatefulWidget {
   State<BodyWidget> createState() => _BodyWidgetState();
 }
 
-class _BodyWidgetState extends State<BodyWidget> implements ContactWidgetInterface{
+class _BodyWidgetState extends State<BodyWidget> {
+  ContactPresenter contactPresenter=ContactPresenter();
   List<Contact> listContact=[];
+  bool isLoading = true; // Biến theo dõi tiến trình tải dữ liệu
   
-  late ContactWidgetPresenter contactWidgetPresenter;
-  
+  Future<void> addData()
+  async {
+
+    Contact contact0=Contact("Chữa cháy","114");
+    listContact.add(contact0);
+
+    List<Contact> listContactFromDB= await contactPresenter.getListContacts();
+    if(listContactFromDB.isNotEmpty){
+       setState(() {
+      listContact.addAll(listContactFromDB);
+      isLoading = false; //tiến trình tải hoàn thành
+    });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    contactWidgetPresenter=ContactWidgetPresenter(this);
     addData();
   }
-  void addData()
-  {
-   // listContact=contactWidgetPresenter.getListContact(widget.accountData.phone) as List<Contact>;
-
-    Contact contact0=Contact("Chữa cháy","114");
-    Contact contact1=Contact("Bố","0321456321");
-    Contact contact2=Contact("Mẹ","0363604563");
-    listContact.add(contact0);
-    listContact.add(contact1);
-    listContact.add(contact2);
-
-  }
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: isLoading 
+      ? Center (child: CircularProgressIndicator())
+      :Container(
         child: Column(
             children: [
               SizedBox(height: 30,),
-            //  Text("Liên hệ khẩn cấp",style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.black),),
-              Text("Danh sách thành viên",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold,color: Colors.black),),
+              Text("Danh sách thành viên",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Color(0xffDC4A48)),),
+              /*
               Row(
                 children: [
                   IconButton(onPressed: (){
@@ -65,6 +67,7 @@ class _BodyWidgetState extends State<BodyWidget> implements ContactWidgetInterfa
                   Text("Thêm liên hệ mới",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Color(0xffDC4A48)),)
                 ],
               ),
+              */
               Expanded(
                 child: ListView.builder(
                   itemCount:listContact.length,
@@ -80,33 +83,23 @@ class _BodyWidgetState extends State<BodyWidget> implements ContactWidgetInterfa
   Widget getRow(int index){
     return Card(
       child: ListTile(
+        onTap: (){
+          String phoneNumber="";
+          phoneNumber=listContact[index].phone.toString();
+          launch('tel:$phoneNumber');
+        },
         leading: CircleAvatar(
           child: Text(listContact[index].name[0]),
           backgroundColor: Color(0xffD9002D),
           foregroundColor: Colors.white,
         ),
-        title: Container(
-          child: GestureDetector(
-            onTap: (){
-              print("Ontap");
-              String phoneNumber="";
-              phoneNumber=listContact[index].phone.toString();
-              launch('tel:$phoneNumber');
-            },
-            child: Column(
+        title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(listContact[index].name),
                 Text(listContact[index].phone),
               ],
             ),
-          ),
-        ),
-        trailing: IconButton(
-          icon: Icon(Icons.more_vert),
-          onPressed:(){
-          },
-        ),
       ),
     );
   }

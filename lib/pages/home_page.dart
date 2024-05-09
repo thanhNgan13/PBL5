@@ -1,8 +1,8 @@
 import 'package:fire_warning_app/pages/homepage_widgets/home_widget.dart';
+import 'package:fire_warning_app/pages/homepage_widgets/notification_widget.dart';
 import 'package:fire_warning_app/pages/homepage_widgets/option_widget.dart';
 import 'package:fire_warning_app/pages/homepage_widgets/personal_widget.dart';
 import 'package:flutter/material.dart';
-import '../model/Account.dart';
 import 'homepage_widgets/contact_widget.dart';
 
 class HomePage extends StatelessWidget {
@@ -23,18 +23,17 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
+
   int _currentIndex=0;
   final tabs=[
     HomeWidget(),
     ContactWidget(),
     OptionWidget(),
-    Container(
-      child: Center(
-        child: Text('notification'),
-      ),
-    ),
+    NotificationWidget(),
     PersonalWidget(),
   ];
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

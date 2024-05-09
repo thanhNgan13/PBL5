@@ -1,30 +1,32 @@
 import 'dart:async';
 
+import 'package:fire_warning_app/pages/home_page.dart';
 import 'package:fire_warning_app/presenters/alert_presenter.dart';
 import 'package:flutter/material.dart';
 
-class ButtonAlertWidget extends StatelessWidget {
-  const ButtonAlertWidget({super.key});
+class WarningPage extends StatelessWidget {
+  const WarningPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: BodyWidget(),
-    );
+    return Scaffold(
+      body:const BodyWidget(),
+      );
   }
 }
 class BodyWidget extends StatefulWidget {
   const BodyWidget({super.key});
 
+
+
   @override
-  State<BodyWidget> createState() => _BodyWidgetState();
+  State<BodyWidget> createState() => _MyWidgetState();
 }
 
-class _BodyWidgetState extends State<BodyWidget> {
-  AlertPresenter _alertPresenter=  AlertPresenter();
+class _MyWidgetState extends State<BodyWidget> {
+   AlertPresenter _alertPresenter=  AlertPresenter();
 
-  //String? command="Start";
-  double _progressValue=0.0;
+   double _progressValue=0.0;
   late Timer mt;
 
   letStartCircularProgress(){
@@ -36,7 +38,8 @@ class _BodyWidgetState extends State<BodyWidget> {
         _progressValue+=0.01;
         if(_progressValue.toStringAsFixed(1)=='1.1') {//finish 1 round
           //update isAlert in database
-          _alertPresenter.sendAlertToFamily();
+          _alertPresenter.updatePersonalAlertStatus();
+          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()),);
 
           //set = 0
           setState(() {
@@ -56,9 +59,35 @@ class _BodyWidgetState extends State<BodyWidget> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Center(
+      child:Container(
+         width: double.infinity, // Phủ kín chiều rộng màn hình
+        height: double.infinity,
+        decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xffD84441), 
+            Color(0xff8F001E), 
+          ],
+        ),
+      ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ImageIcon(AssetImage("assets/icons/bell.png"),size: 80,color: Colors.white,),
+            SizedBox(height: 10,),
+            Text("CẢNH BÁO",style:TextStyle(fontSize: 24, color: Colors.white,fontWeight: FontWeight.bold),),
+            SizedBox(height: 20,),
+            Text("Phát hiện có cháy tại khu vực gắn camera",style:TextStyle(fontSize: 14, color: Colors.white,fontWeight: FontWeight.bold),),
+            SizedBox(height: 30,),
+            
+            //button
+            Container(
           child: SizedBox(
             height: 240,
             child: GestureDetector(
@@ -78,39 +107,38 @@ class _BodyWidgetState extends State<BodyWidget> {
                         height: 240,
                         width: 240,
                         child: CircularProgressIndicator(
-                          strokeWidth: 10,
+                          strokeWidth: 5,
                           backgroundColor: Color(0xffF2E4E6),
-                          valueColor: new AlwaysStoppedAnimation(Color(0xffD9002D)),
+                          valueColor: new AlwaysStoppedAnimation(Color.fromARGB(255, 13,181,97)),
                           value: _progressValue,
                         ),
                       ),
                     ),
                   ),
                   Container(
-                    height: 240,
-                    width: 240,
+                    height: 100,
+                    width: 100,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(160),
                       image:  DecorationImage(
-                        image: AssetImage('assets/icons/button_alert.png'),
+                        image: AssetImage('assets/icons/insurance.png'),
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
-                  /*
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(command!,textAlign: TextAlign.center,style: TextStyle(fontSize: 20,color: Colors.black),),
-                    ],
-                  ),*/
                 ],
               ),
 
             ),
           ),
-      );
+      ),
+
+      SizedBox(height: 10,),
+
+            Text("Chạm và giữ 10s để tắt cảnh báo",style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.bold,),)
+          ],
+        ),
+      ),
+    );
   }
 }
-

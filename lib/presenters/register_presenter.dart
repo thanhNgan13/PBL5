@@ -60,21 +60,25 @@ class RegisterPresenter
     });
 
   }
-
-  Future<void> register(Account account) async {
-    if(await _model.isExistingPhone(account.phone) == true){
+  Future<bool> checkValidInfor(String phone,String code) async {
+    if(await _model.isExistingPhone(phone) == true){
         interface?.registerError("Số điện thoại đã được đăng ký");
+        return false;
+    }else{
+      if(await _model.isExistingCode(code) == false){
+        interface?.registerError("Mã đăng ký không tồn tại");
+        return false;
+      }
+    }
+    return true;
+  }
+  Future<void> register(Account account) async {
+    if(await _model.addAccount(account)==true ){
+      interface?.registerSuccess();
     }
     else{
-      if(await _model.addAccount(account)==true ){
-        interface?.registerSuccess();
-      }
-      else{
-        interface?.registerError("");
-      }
+      interface?.registerError("Lỗi trong quá trình đăng ký");
     }
-
-
   }
 
   dispose()

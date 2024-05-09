@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:fire_warning_app/pages/homepage_widgets/button_alert_widget.dart';
 import 'package:flutter/material.dart';
 class HomeWidget extends StatelessWidget {
@@ -33,7 +32,6 @@ class _BodyWidgetState extends State<BodyWidget> {
           Column(
             children: [
               Text('Xin chào',style:TextStyle(fontSize: 15, color: Colors.white)),
-           //   Text('Linda',style:TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold))
             ],
           ),
         ]

@@ -1,10 +1,13 @@
+import 'package:fire_warning_app/pages/otp_page.dart';
 import 'package:fire_warning_app/pages/register_success_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../model/Account.dart';
 import '../presenters/register_presenter.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -148,8 +151,13 @@ class _BodyWidgetState extends State<BodyWidget> implements RegisterInterface {
                         builder: (context, snapshot) {
                           Color backgroundColor = snapshot.data == true ? Color(0xffDC4A48) : Colors.grey;
                           return TextButton(
-                            onPressed: snapshot.data==true?() {
+
+                            onPressed: snapshot.data==true?() async{
                               clickRegister(nameController.text.toString(),phoneController.text.toString(),codeController.text.toString());
+                              /*
+                             
+                              */
+
                             }:null,
                             child: Text("Đăng ký",
                               style: TextStyle(fontSize: 24, color: Colors.white,),
@@ -181,9 +189,29 @@ class _BodyWidgetState extends State<BodyWidget> implements RegisterInterface {
     Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterSuccessPage()),);
   }
 
-  void clickRegister(String name, String phone, String code) {
-    Account account= new Account(name,phone,code);
-    registerPresenter.register(account);
+  Future<void> clickRegister(String name, String phone, String code) async {
+    bool validInfor=false;
+    validInfor=await registerPresenter.checkValidInfor(phone, code);
+    
+    if(validInfor){
+      String phoneNum=phoneController.text.toString().substring(1);
+
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: '+84${phoneNum}',
+        verificationCompleted: (PhoneAuthCredential credential){}, 
+        verificationFailed: (FirebaseAuthException e){
+          ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Xác thực thất bại: ${e.message}")) );
+        }, 
+        codeSent: (String verificationId,int?resendtoken){
+          Account newAccount= Account(nameController.text.toString(),phoneController.text.toString(),codeController.text.toString());
+          Navigator.push(context,MaterialPageRoute(builder: (context) => OTPPage(verify: verificationId,userAccount: newAccount,)),);
+        }, 
+        codeAutoRetrievalTimeout: (String verificationId) => {},
+      );
+    }/*
+    Account account= Account(name,phone,code);
+    registerPresenter.register(account);*/
   }
 
   @override

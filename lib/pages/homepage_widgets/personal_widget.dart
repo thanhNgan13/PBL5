@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:fire_warning_app/helper/log_out_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../login_page.dart';
 class PersonalWidget extends StatelessWidget {
@@ -21,6 +20,8 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
+
+  LogOutHelper logoutHelper = LogOutHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +71,7 @@ class _BodyWidgetState extends State<BodyWidget> {
               ),
               TextButton(
                 onPressed:(){
-                  disposeAccountData();
+                  logoutHelper.disposeAccountData();
                   Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()),);
                 },
                 child: Text("Đăng xuất",
@@ -87,12 +88,5 @@ class _BodyWidgetState extends State<BodyWidget> {
         ),
     );
   }
-  Future<void> disposeAccountData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool("USER_IS_LOGGED", false);
-    await prefs.remove('USER_IS_LOGGED');
-    await prefs.remove('USER_PHONE');
-    await prefs.remove('USER_CODE');
-
-  }
+  
 }

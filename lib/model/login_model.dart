@@ -1,11 +1,13 @@
+import 'package:fire_warning_app/helper/check_login_helper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginModel{
   late DatabaseReference dbRef;
   late FirebaseDatabase firebaseDatabase;
 
-  LoginModel(){
+  LoginModel(){ 
     FirebaseApp firebaseApp = Firebase.app();
     firebaseDatabase = FirebaseDatabase.instanceFor(
       app: firebaseApp,
@@ -26,6 +28,10 @@ class LoginModel{
     }
     if(phoneCase==2){
       if(code==codeGetting.code){
+        //store user phone and codeID in shared_preferences
+        saveDataToSharedPreferences(phone,code);
+        
+
         return 4;
       }else{
         codeCase=await isExistingCode(code);
@@ -42,7 +48,7 @@ class LoginModel{
     try {
       DatabaseReference accountsRef = dbRef.child("Accounts");
       DatabaseEvent event = await accountsRef.once();
-      if (event.snapshot != null) {// Collection Accounts exists
+      if (event.snapshot.exists) {// Collection Accounts exists
         DataSnapshot dataSnapshot = event.snapshot;
         if( dataSnapshot.value!=null){//Collection Accounts have data
           Map<dynamic, dynamic>existingAccountsData = dataSnapshot.value as Map<dynamic,dynamic>;
@@ -70,7 +76,7 @@ class LoginModel{
     try {
       DatabaseReference codesRef = dbRef.child("Codes");
       DatabaseEvent event = await codesRef.once();
-      if (event.snapshot != null) { // Collection Codes exists
+      if (event.snapshot.exists) { // Collection Codes exists
         DataSnapshot dataSnapshot = event.snapshot;
         if (dataSnapshot.value != null) { // Collection Codes have data
           Map<dynamic, dynamic>? existingCodeData = dataSnapshot.value as Map<dynamic, dynamic>?;
@@ -99,4 +105,15 @@ class CodeHolder {
   String code;
 
   CodeHolder(this.code);
+}
+
+Future<void> saveDataToSharedPreferences(String phone,String code) async {
+  // Obtain shared preferences.
+  await Future.delayed(Duration(seconds: 2));
+final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('USER_PHONE', phone);
+  await prefs.setString('USER_CODE', code);
+  prefs.reload();
+  CheckLoginHelper checkloginHelper= CheckLoginHelper();
+  checkloginHelper.checkUserLogin();
 }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:fire_warning_app/model/Account.dart';
 import 'package:fire_warning_app/presenters/validators/login_valid.dart';
 import 'package:rxdart/rxdart.dart';
 

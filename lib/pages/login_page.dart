@@ -1,8 +1,6 @@
 import 'package:fire_warning_app/pages/register_page.dart';
 import 'package:fire_warning_app/pages/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../model/Account.dart';
 import '../presenters/login_presenter.dart';
 
 class LoginPage extends StatelessWidget {
@@ -59,7 +57,7 @@ class _BodyWidgetState extends State<BodyWidget> implements LoginInterface{
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           //tite
-          Text('ĐĂNG NHẬP TÀI KHOẢN', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black,)),
+          Text('ĐĂNG NHẬP TÀI KHOẢN', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black,)),
           //logo
           Container(width: 200, padding: const EdgeInsets.all(20.0), child: Image.asset('assets/icons/logo_red.png'),), //Container
           //form
@@ -137,8 +135,7 @@ class _BodyWidgetState extends State<BodyWidget> implements LoginInterface{
                             onPressed: snapshot.data==true?() {
                               clickLogin(phoneController.text.toString(),codeController.text.toString());
                             }:null,
-                            child: Text("Đăng nhập",
-                              style: TextStyle(fontSize: 24, color: Colors.white,),
+                            child: Text("Đăng nhập",style: TextStyle(fontSize: 24, color: Colors.white,),
                             ),
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all<Color>(backgroundColor),
@@ -183,14 +180,6 @@ class _BodyWidgetState extends State<BodyWidget> implements LoginInterface{
 
   @override
   Future<void> loginSuccess() async {
-    // TODO: implement loginSuccess
-        //save on the shared preferences that the user is logged in
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool("USER_IS_LOGGED", true);
-    await prefs.setString("USER_PHONE", phoneController.text);
-    await prefs.setString("USER_CODE", codeController.text);
-
-
     Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()),);
   }
 

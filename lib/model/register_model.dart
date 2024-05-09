@@ -17,14 +17,14 @@ class RegisterModel {
 
   //DatabaseReference dbRef=FirebaseDatabase.instance.ref("");
   Future<bool> addAccount(Account account) async {
-    //add phone number to array
+    //add phone number to array of Codes
     if(await addPhoneToCodes(account.code,account.phone)==false){
       return false;
     }
 
     //add account to db
     Map<dynamic, dynamic> accountData ={
-      "name": account.name,
+      "name": account.name, 
       "phone": account.phone,
       "code": account.code,
       "isAlerted": false,
@@ -33,13 +33,38 @@ class RegisterModel {
     return true;
 
   }
+  //check codeID exists in Codes
+ //check codeID exists in Codes
+  Future<bool> isExistingCode(String code) async {
+    try{
+      DatabaseReference accountsRef = dbRef.child("Codes");
+      DatabaseEvent event = await accountsRef.once();
+      if (event.snapshot.exists){// Collection Codes exists
+        DataSnapshot dataSnapshot = event.snapshot;
+        //get the existing code data
+        if( dataSnapshot.value!=null){//Collection Codes have data
+          Map<dynamic, dynamic>existingAccountsData = dataSnapshot.value as Map<dynamic,dynamic>;
+          bool isCodeExist = false;
+          existingAccountsData.forEach((key, value) {
+            if (value["code"] == code) {
+              isCodeExist= true;
+            }
+          });
+            return isCodeExist;
+        }
+      }
 
+    }catch(e){
+      return false;
+    }
+    return false;
+  }
   //check phone exists in Accounts
   Future<bool> isExistingPhone(String phone) async {
     try{
       DatabaseReference accountsRef = dbRef.child("Accounts");
       DatabaseEvent event = await accountsRef.once();
-      if (event.snapshot != null) { // Collection Accounts exists
+      if (event.snapshot.exists) { // Collection Accounts exists
         DataSnapshot dataSnapshot = event.snapshot;
 
         //get the existing code data
@@ -53,24 +78,19 @@ class RegisterModel {
           });
             return isPhoneExist;
         }
-         else{
-           return false;
-        }
-      }
-      else{
-        return false;
       }
     }
     catch(e){
       return true;
     }
+    return false;
   }
 
   Future<bool> addPhoneToCodes(String code,String phone) async {
     try {
       DatabaseReference codesRef = dbRef.child("Codes");
       DatabaseEvent event = await codesRef.once();
-      if (event.snapshot != null){// Collection Codes exists
+      if (event.snapshot != null){// Collection Codes exists in DB
         DataSnapshot dataSnapshot = event.snapshot;
         if (dataSnapshot.value != null) {// Collection Codes have data
           // get key
@@ -88,10 +108,10 @@ class RegisterModel {
               List<dynamic> existingPhones =List.from(value["phones"]);
               // Add the new phone number to the existing phone numbers array
               existingPhones.add(phone);
-              // Update the phones array
+              // Update the phones array in DB
               existingCodeData[codeKey]['phones'] = existingPhones;
 
-              // Update the code data
+              // Update the Codes in DB
               Map<String, Object?> convertedData = Map<String, Object?>.from(existingCodeData[codeKey]! as Map<Object?, Object?>);
               //await codesRef.child(codeKey!).update(existingCodeData[codeKey]! as Map<String, Object?>);
               await codesRef.child(codeKey!).update(convertedData);
@@ -130,7 +150,7 @@ class RegisterModel {
             return true;
           }
         }
-        else {// Collection does not have data
+        else {// Collection does not exist data
           // Create a new code data and add phone to array
           Map<dynamic, dynamic> codeData = {
             "code": code,

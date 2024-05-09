@@ -1,20 +1,42 @@
 import 'package:fire_warning_app/component/BottomNavItem.dart';
-import 'package:fire_warning_app/firebase_options.dart';
+import 'package:fire_warning_app/helper/local_notification_service.dart';
 import 'package:fire_warning_app/pages/home/ESP32/view_status_fire.dart';
-import 'package:fire_warning_app/pages/home/VideoPages/VideoPlay.dart';
 import 'package:fire_warning_app/pages/home/VideoPages/hom_live_video_from_esp32cam%20copy.dart';
-import 'package:fire_warning_app/pages/home/home_v2.dart';
 import 'package:fire_warning_app/pages/home/ESP8266/view_status_co.dart';
-import 'package:fire_warning_app/pages/test/test_control_servo.dart';
 import 'package:fire_warning_app/pages/test/vidieukhien.dart';
+import 'package:fire_warning_app/pages/warning_page.dart';
+import 'package:fire_warning_app/pages/welcome_page.dart';
+import 'package:fire_warning_app/presenters/alert_status_presenter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'dart:io';
-
-import 'package:fire_warning_app/pages/home_page.dart';
-import 'package:fire_warning_app/pages/login_page.dart';
-import 'package:fire_warning_app/pages/welcome/welcome.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+
+
+final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey<NavigatorState>();
+
+@pragma('vm:entry-point')
+Future<void> checkAlertStatus() async {
+    print("***********************************************AndroidAlarmManager work checkAlertStatus fucntion");
+ // CheckLoginHelper checkLoginHelper= CheckLoginHelper();
+ // bool isLogin=await checkLoginHelper.checkUserLogin();
+  //if(isLogin){
+     print("***********************************************Check data function");
+    // Your code here
+    //check alert status from DB
+      AlertStatusPresenter alertStatusPresenter = AlertStatusPresenter();
+      bool isAlert= await alertStatusPresenter.getAlertStatus();
+      if(isAlert){
+        // create and show Notification Service
+        NotificationService notificationService = NotificationService();
+        await notificationService.initNotification();
+        await notificationService.showNotification(id: 4, title: "Cảnh báo", body: "Hệ thống phát hiện có cháy");
+        print("*******************************************Send noti ");
+  //    }
+  }
+ 
+    
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,14 +49,43 @@ void main() async {
               messagingSenderId: '138271755735',
               projectId: 'fire-warning-system-2d9c2'))
       : await Firebase.initializeApp();
-  runApp(const MyApp());
+
+   //khởi tạo alarm manager
+  await AndroidAlarmManager.initialize();
+
+  
+  await AndroidAlarmManager.periodic(
+    const Duration(seconds: 10), 
+    0, 
+    checkAlertStatus,
+    wakeup: true, // Đánh thức thiết bị nếu nó đang trong chế độ ngủ
+    exact: true,
+  );
+  
+
+  runApp(MaterialApp(
+    navigatorKey: globalNavigatorKey,
+    home: MyApp(),
+  ));
+  
 }
 
-class MyApp extends StatelessWidget {
+
+
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  
+
+  @override
   Widget build(BuildContext context) {
+    
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
@@ -42,7 +93,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MyHomePage(),
+      home:const WelcomePage(),
+    //    home:const WarningPage(),
     );
   }
 }
@@ -63,10 +115,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   final List<Widget> _pages = [
-    FireStatusPage(),
+    const FireStatusPage(),
     MJPEGStream(),
-    Home_v3(),
-    MyHome()
+    const Home_v3(),
+   const MyHome()
   ];
 
   final List<BottomNavItem> bottomNavItems = [
