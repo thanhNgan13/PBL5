@@ -25,6 +25,7 @@ class _BodyWidgetState extends State<BodyWidget> {
     return Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ImageIcon(AssetImage("assets/icons/success.png"),),
             SizedBox(height: 40,),

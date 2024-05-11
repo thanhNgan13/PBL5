@@ -21,7 +21,9 @@ class NotificationService{
     );
     await _notificationsPlugin.initialize(initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async{
-        if (notificationResponse.actionId == 'open') {
+        
+        if (notificationResponse.actionId == '0') {
+          print("click vào open ");
       //open warning page
          // Ensure the context is available or use a global navigator key
         Navigator.of(globalNavigatorKey.currentContext!).pushAndRemoveUntil(
@@ -39,14 +41,14 @@ class NotificationService{
   notificationDetails(){
     return const NotificationDetails(
       android: AndroidNotificationDetails(
-        'id', 
-        "name",
+        'idnoti', 
+        "namenoti",
         importance: Importance.max,
         priority: Priority.high,
         playSound: true,
         sound: RawResourceAndroidNotificationSound('notification'),
         actions: <AndroidNotificationAction>[
-        AndroidNotificationAction('open', 'Mở ứng dụng', showsUserInterface: true,),
+        AndroidNotificationAction("0", 'Mở ứng dụng', showsUserInterface: true,),
       ],
       
         ),

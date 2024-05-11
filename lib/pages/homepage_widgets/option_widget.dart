@@ -1,3 +1,4 @@
+import 'package:fire_warning_app/pages/IoT/VideoPages/hom_live_video_from_esp32cam%20copy.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -63,7 +64,11 @@ class _BodyWidgetState extends State<BodyWidget> {
                               const Spacer(),
                               Container(
                                   child: IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                        MJPEGStream()
+                                        ));
+                                      },
                                       icon:
                                           Image.asset('assets/icons/next.png')))
                             ],

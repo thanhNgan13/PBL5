@@ -1,16 +1,12 @@
-import 'package:fire_warning_app/component/BottomNavItem.dart';
-import 'package:fire_warning_app/firebase_options.dart';
-import 'package:fire_warning_app/pages/IoT/ESP32/view_status_fire.dart';
-import 'package:fire_warning_app/pages/IoT/VideoPages/VideoPlay.dart';
-import 'package:fire_warning_app/pages/IoT/VideoPages/hom_live_video_from_esp32cam%20copy.dart';
-import 'package:fire_warning_app/pages/IoT/home_v2.dart';
-import 'package:fire_warning_app/pages/IoT/ESP8266/view_status_co.dart';
-import 'package:fire_warning_app/pages/IoT/test_control_servo.dart';
-import 'package:fire_warning_app/pages/IoT/vidieukhien.dart';
+import 'package:fire_warning_app/helper/local_notification_service.dart';
+import 'package:fire_warning_app/model/get_fire_status_db.dart';
+import 'package:fire_warning_app/pages/welcome_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+
+import 'presenters/alert_status_presenter.dart';
 
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey<NavigatorState>();
@@ -18,19 +14,16 @@ final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey<NavigatorState>()
 @pragma('vm:entry-point')
 Future<void> checkAlertStatus() async {
     print("***********************************************AndroidAlarmManager work checkAlertStatus fucntion");
- // CheckLoginHelper checkLoginHelper= CheckLoginHelper();
- // bool isLogin=await checkLoginHelper.checkUserLogin();
-  //if(isLogin){
-     print("***********************************************Check data function");
-    // Your code here
+
     //check alert status from DB
       AlertStatusPresenter alertStatusPresenter = AlertStatusPresenter();
       bool isAlert= await alertStatusPresenter.getAlertStatus();
+
       if(isAlert){
         // create and show Notification Service
         NotificationService notificationService = NotificationService();
         await notificationService.initNotification();
-        await notificationService.showNotification(id: 4, title: "Cảnh báo", body: "Hệ thống phát hiện có cháy");
+        await notificationService.showNotification(id: 5, title: "Cảnh báo", body: "Hệ thống phát hiện có cháy");
         print("*******************************************Send noti ");
   //    }
   }
@@ -96,71 +89,5 @@ class _MyAppState extends State<MyApp> {
       home:const WelcomePage(),
     //    home:const WarningPage(),
     );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0;
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  final List<Widget> _pages = [
-    const FireStatusPage(),
-    MJPEGStream(),
-    const Home_v3(),
-   const MyHome()
-  ];
-
-  final List<BottomNavItem> bottomNavItems = [
-    BottomNavItem(
-        icon: const Icon(
-          Icons.newspaper_rounded,
-        ),
-        label: 'Warning'),
-    BottomNavItem(icon: const Icon(Icons.person_outline), label: 'Control'),
-    BottomNavItem(icon: const Icon(Icons.webhook_rounded), label: 'ESP8266'),
-    BottomNavItem(icon: const Icon(Icons.home_rounded), label: 'My Home')
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: IndexedStack(
-          index: _selectedIndex,
-          children: _pages,
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.black,
-          unselectedItemColor: Colors.grey,
-          selectedItemColor: Colors.red,
-          unselectedFontSize: 15,
-          selectedFontSize: 15,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          items: [
-            for (var i = 0; i < bottomNavItems.length; i++)
-              if (i == 0 && _selectedIndex != 0)
-                const BottomNavigationBarItem(
-                  icon: Icon(Icons.newspaper_rounded),
-                  label: 'Home',
-                )
-              else
-                BottomNavigationBarItem(
-                  icon: bottomNavItems.elementAt(i).icon,
-                  label: bottomNavItems.elementAt(i).label,
-                )
-          ],
-        ));
   }
 }

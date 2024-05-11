@@ -25,17 +25,35 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
+  int _selectedIndex = 0;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
-  int _currentIndex=0;
-  final tabs=[
-    HomeWidget(),
-    ContactWidget(),
-    OptionWidget(),
-    NotificationWidget(),
-    PersonalWidget(),
+  final List<Widget> _tabs = [
+    const HomeWidget(),
+    const ContactWidget(),
+    const OptionWidget(),
+    const NotificationWidget(),
+    const PersonalWidget(),
   ];
 
-
+  final List<BottomNavItem> bottomNavItems = [
+    BottomNavItem(
+        icon: const Icon(
+          Icons.home_rounded,
+        ),
+        label: 'Trang chủ'),
+    BottomNavItem(
+        icon: const Icon(Icons.account_box_rounded), label: 'Danh bạ'),
+    BottomNavItem(
+        icon: const Icon(Icons.space_dashboard_rounded), label: 'Tùy chọn'),
+    BottomNavItem(
+        icon: const Icon(Icons.notifications_rounded), label: 'Thông báo'),
+    BottomNavItem(icon: const Icon(Icons.person_rounded), label: 'Cá nhân')
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(

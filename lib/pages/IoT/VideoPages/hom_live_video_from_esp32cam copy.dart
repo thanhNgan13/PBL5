@@ -1,56 +1,44 @@
 import 'dart:async';
 import 'dart:convert';
-
+ 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+ 
 class MJPEGStream extends StatefulWidget {
   MJPEGStream();
-
+ 
   @override
   _MJPEGStreamState createState() => _MJPEGStreamState();
 }
-
+ 
 class _MJPEGStreamState extends State<MJPEGStream> {
   late http.Response response;
   late http.Client client;
   late StreamController<Image> streamController;
-  final String esp32camIP = '192.168.91.224';
-
-  void _updateStepper(int steps) async {
-    var url = Uri.http(esp32camIP, '/stepper', {'steps': steps.toString()});
-    try {
-      var response = await http.get(url);
-      print('Server response: ${response.body}');
-    } catch (e) {
-      print("Failed to connect to ESP32-CAM: $e");
-    }
-  }
-
-  void sendData(int steps, int pos) async {
+  final String URL_Server_Flask = '192.168.154.96';
+  final String URL_STREAM = 'http://192.168.154.96:8999/client/videos';
+ 
+  late InAppWebViewController webViewController;
+ 
+  int pos = 90;
+ 
+  void sendData(int steps) async {
     var response = await http.post(
-      Uri.parse('http://192.168.163.96:5000/control_esp32cam'),
+      Uri.parse('http://192.168.154.96:5000/update_stepper'),
       headers: {"Content-Type": "application/json"},
-      body: json.encode({"stepper": steps, "servo": pos}),
+      body: json.encode({"stepper": steps}),
     );
   }
-
-  @override
-  void initState() {
-    super.initState();
-    //streamController = StreamController<Image>();
-    //loadStream();
+ 
+  void sendDataServo(int pos) async {
+    var response = await http.post(
+      Uri.parse('http://192.168.154.96:5000/update_servo'),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode({"servo": pos}),
+    );
   }
-
-  // void loadStream() {
-  //   client = http.Client();
-  //   client.get(Uri.parse(url)).then((response) {
-  //     streamController.add(Image.memory(response.bodyBytes));
-  //   }).catchError((error) {
-  //     print(error.toString());
-  //   });
-  // }
-
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,22 +48,33 @@ class _MJPEGStreamState extends State<MJPEGStream> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: StreamBuilder<Image>(
-          //     stream: streamController.stream,
-          //     builder: (context, snapshot) {
-          //       if (snapshot.connectionState == ConnectionState.waiting) {
-          //         return const Center(child: CircularProgressIndicator());
-          //       }
-          //       if (snapshot.hasError) {
-          //         return Center(child: Text('Lỗi: ${snapshot.error}'));
-          //       }
-          //       return Center(child: snapshot.data ?? Container());
-          //     },
-          //   ),
-          // ),
-
+          // show a webview to display the video stream
+          Expanded(
+            child: Container(
+                child: InAppWebView(
+              initialUrlRequest:
+                  URLRequest(url: WebUri.uri(Uri.parse(URL_STREAM))),
+              onWebViewCreated: (controller) {
+                webViewController = controller;
+              },
+              onLoadStart: (controller, url) {
+                print('Load Start: $url');
+              },
+              onLoadStop: (controller, url) {
+                print('Load Stop: $url');
+              },
+              onProgressChanged: (controller, progress) {
+                print('Progress: $progress');
+              },
+              onConsoleMessage: (controller, consoleMessage) {
+                print('Console: ${consoleMessage.message}');
+              },
+              onLoadError: (controller, url, code, message) {
+                print('Error: $message');
+              },
+            )),
+          ),
+ 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -99,7 +98,15 @@ class _MJPEGStreamState extends State<MJPEGStream> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        pos -= 10;
+                        if (pos < 0) {
+                          pos = 0;
+                        }
+                        sendDataServo(pos);
+                      });
+                    },
                     icon: const Icon(Icons.arrow_upward_rounded)),
               ],
             ),
@@ -112,26 +119,35 @@ class _MJPEGStreamState extends State<MJPEGStream> {
               children: [
                 IconButton(
                     onPressed: () {
-                      sendData(-100, 0);
+                      sendData(-100);
                     },
                     icon: const Icon(Icons.arrow_back)),
                 const SizedBox(width: 10),
                 IconButton(
                     onPressed: () {
-                      sendData(100, 0);
+                      sendData(100);
                     },
                     icon: const Icon(Icons.arrow_forward))
               ],
             ),
           ),
-
+ 
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 IconButton(
-                    onPressed: () {}, icon: const Icon(Icons.arrow_downward)),
+                    onPressed: () {
+                      setState(() {
+                        pos += 10;
+                        if (pos > 180) {
+                          pos = 180;
+                        }
+                        sendDataServo(pos);
+                      });
+                    },
+                    icon: const Icon(Icons.arrow_downward)),
               ],
             ),
           ),
@@ -139,11 +155,5 @@ class _MJPEGStreamState extends State<MJPEGStream> {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    client.close();
-    streamController.close();
-    super.dispose();
-  }
 }
+ 
