@@ -48,10 +48,10 @@ class _FireStatusPageState extends State<FireStatusPage> {
                   Text('Fire status: $status',
                       style: const TextStyle(fontSize: 18)),
                   const SizedBox(height: 20),
-                  if (status == 'True')
+                  if (status == 'true')
                     ElevatedButton(
                         onPressed: () async {
-                          await _database.update({'Status': 'False'});
+                          await _database.update({'Status': 'false'});
                         },
                         child: const Text('Tắt Báo Cháy',
                             style: TextStyle(fontSize: 18)))
@@ -59,7 +59,7 @@ class _FireStatusPageState extends State<FireStatusPage> {
               ),
             );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),

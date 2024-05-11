@@ -1,27 +1,22 @@
-import 'package:fire_warning_app/pages/IoT/ESP8266/co_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class Home_v3 extends StatefulWidget {
-  const Home_v3({super.key});
+class StatusCO extends StatefulWidget {
+  const StatusCO({super.key});
 
   @override
-  State<Home_v3> createState() => _Home_v3State();
+  State<StatusCO> createState() => _StatusCOState();
 }
 
-class _Home_v3State extends State<Home_v3> {
+class _StatusCOState extends State<StatusCO> {
   final DatabaseReference _database = FirebaseDatabase.instanceFor(
           app: Firebase.app(),
-          databaseURL:
-              "https://fire-warning-system-2d9c2-default-rtdb.asia-southeast1.firebasedatabase.app")
-      .ref()
-      .child('ESP8266_1/Outputs/');
+          databaseURL: "https://your-database-url.firebasedatabase.app")
+      .ref();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
+  DatabaseReference getDeviceRef(String deviceId) {
+    return _database.child('$deviceId/Outputs/');
   }
 
   @override
@@ -30,37 +25,47 @@ class _Home_v3State extends State<Home_v3> {
       appBar: AppBar(
         title: Text('Trạng Thái Khí CO'),
       ),
-      body: StreamBuilder(
-        stream: _database.onValue,
-        builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
-          if (snapshot.hasData &&
-              !snapshot.hasError &&
-              snapshot.data!.snapshot.value != null) {
-            // Chuyển dữ liệu nhận được thành Map
-            Map data = snapshot.data!.snapshot.value as Map;
-            String statusCO = data['Status_CO'];
-            String valCO = data['Val_CO'];
+      body: GridView.count(
+        crossAxisCount: 2,
+        children: List.generate(4, (index) {
+          String deviceId = 'ESP8266_${index + 1}';
+          return _buildCOStatus(deviceId);
+        }),
+      ),
+    );
+  }
 
-            // Hiển thị dữ liệu lên màn hình
-            return Center(
+  Widget _buildCOStatus(String deviceId) {
+    return StreamBuilder(
+      stream: getDeviceRef(deviceId).onValue,
+      builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
+        if (snapshot.hasData &&
+            !snapshot.hasError &&
+            snapshot.data!.snapshot.value != null) {
+          Map data = snapshot.data!.snapshot.value as Map;
+          String statusCO = data['Status_CO'];
+          String valCO = data['Val_CO'];
+          return Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('Trạng Thái Khí CO:',
+                  Text('Thiết bị $deviceId',
                       style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 20),
-                  Text('Status CO: $statusCO', style: TextStyle(fontSize: 18)),
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   SizedBox(height: 10),
-                  Text('Val CO: $valCO ppm', style: TextStyle(fontSize: 18)),
+                  Text('Status CO: $statusCO', style: TextStyle(fontSize: 14)),
+                  SizedBox(height: 5),
+                  Text('Val CO: $valCO ppm', style: TextStyle(fontSize: 14)),
                 ],
               ),
-            );
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
+            ),
+          );
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 }

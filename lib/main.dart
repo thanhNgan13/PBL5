@@ -8,27 +8,27 @@ import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
 import 'presenters/alert_status_presenter.dart';
 
-
-final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> globalNavigatorKey =
+    GlobalKey<NavigatorState>();
 
 @pragma('vm:entry-point')
 Future<void> checkAlertStatus() async {
-    print("***********************************************AndroidAlarmManager work checkAlertStatus fucntion");
+  print(
+      "***********************************************AndroidAlarmManager work checkAlertStatus fucntion");
 
-    //check alert status from DB
-      AlertStatusPresenter alertStatusPresenter = AlertStatusPresenter();
-      bool isAlert= await alertStatusPresenter.getAlertStatus();
+  //check alert status from DB
+  AlertStatusPresenter alertStatusPresenter = AlertStatusPresenter();
+  bool isAlert = await alertStatusPresenter.getAlertStatus();
 
-      if(isAlert){
-        // create and show Notification Service
-        NotificationService notificationService = NotificationService();
-        await notificationService.initNotification();
-        await notificationService.showNotification(id: 5, title: "Cảnh báo", body: "Hệ thống phát hiện có cháy");
-        print("*******************************************Send noti ");
-  //    }
+  if (isAlert) {
+    // create and show Notification Service
+    NotificationService notificationService = NotificationService();
+    await notificationService.initNotification();
+    await notificationService.showNotification(
+        id: 5, title: "Cảnh báo", body: "Hệ thống phát hiện có cháy");
+    print("*******************************************Send noti ");
+    //    }
   }
- 
-    
 }
 
 void main() async {
@@ -43,27 +43,23 @@ void main() async {
               projectId: 'fire-warning-system-2d9c2'))
       : await Firebase.initializeApp();
 
-   //khởi tạo alarm manager
+  //khởi tạo alarm manager
   await AndroidAlarmManager.initialize();
 
-  
   await AndroidAlarmManager.periodic(
-    const Duration(seconds: 10), 
-    0, 
+    const Duration(seconds: 10),
+    0,
     checkAlertStatus,
     wakeup: true, // Đánh thức thiết bị nếu nó đang trong chế độ ngủ
     exact: true,
   );
-  
 
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     navigatorKey: globalNavigatorKey,
     home: MyApp(),
   ));
-  
 }
-
-
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -73,12 +69,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
-  
-
   @override
   Widget build(BuildContext context) {
-    
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
@@ -86,8 +78,8 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home:const WelcomePage(),
-    //    home:const WarningPage(),
+      home: const WelcomePage(),
+      //    home:const WarningPage(),
     );
   }
 }
