@@ -1,8 +1,9 @@
 import 'package:fire_warning_app/helper/check_login_helper.dart';
+import 'package:fire_warning_app/helper/token_helper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+ 
 class LoginModel{
   late DatabaseReference dbRef;
   late FirebaseDatabase firebaseDatabase;
@@ -28,11 +29,20 @@ class LoginModel{
     }
     if(phoneCase==2){
       if(code==codeGetting.code){
-        //store user phone and codeID in shared_preferences
-        saveDataToSharedPreferences(phone,code);
         
+        //update token in db+
+        if(await saveUserTokenInDB(phone))
+        {
+          //store user phone and codeID in shared_preferences
+          saveDataToSharedPreferences(phone,code);
 
-        return 4;
+          return 4;
+        }
+        else
+        {
+          return 0;
+        }
+
       }else{
         codeCase=await isExistingCode(code);
         if(codeCase==2){
@@ -100,6 +110,35 @@ class LoginModel{
       return 0;
     }
   }
+
+  Future<bool> saveUserTokenInDB(String _phone) async {
+  TokenManager userToken = TokenManager();
+  String token=await userToken.initToken();
+  if(token!="")
+  {
+     try{
+     DatabaseReference accountsRef = dbRef.child("Accounts");
+      DatabaseEvent event = await accountsRef.once();
+      if (event.snapshot.exists) {// Collection Accounts exists
+         DataSnapshot dataSnapshot = event.snapshot;
+        if( dataSnapshot.value!=null){//Collection Accounts have data
+          Map<dynamic, dynamic>existingAccountsData = dataSnapshot.value as Map<dynamic,dynamic>;
+          for (var entry in existingAccountsData!.entries){
+            var value = entry.value;
+            if (value["phone"] == _phone) { //the code exists in the collection
+              accountsRef.update({"token": token});
+              return true;
+            }
+          }
+        }
+      }
+    }catch(e){
+      return false;
+    }
+  }
+ 
+  return false;
+}
 }
 class CodeHolder {
   String code;
@@ -117,3 +156,4 @@ final SharedPreferences prefs = await SharedPreferences.getInstance();
   CheckLoginHelper checkloginHelper= CheckLoginHelper();
   checkloginHelper.checkUserLogin();
 }
+

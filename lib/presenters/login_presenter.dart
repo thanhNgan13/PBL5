@@ -53,7 +53,7 @@ class LoginPresenter
       int loginCase=await _model.login(phone, code);
       switch(loginCase){
         case 0:
-          interface?.loginError("Lỗi");
+          interface?.loginError("Lỗi đăng nhập");
         case 1:
           interface?.loginError("Mã đăng ký không tồn tại");
         case 2:

@@ -1,12 +1,15 @@
+import 'package:fire_warning_app/helper/token_helper.dart';
 import 'package:fire_warning_app/helper/local_notification_service.dart';
 import 'package:fire_warning_app/model/get_fire_status_db.dart';
 import 'package:fire_warning_app/pages/welcome_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
 import 'presenters/alert_status_presenter.dart';
+import 'package:fire_warning_app/helper/fcm_notification-handler.dart';
 
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey<NavigatorState>();
@@ -42,7 +45,7 @@ void main() async {
               messagingSenderId: '138271755735',
               projectId: 'fire-warning-system-2d9c2'))
       : await Firebase.initializeApp();
-
+/*
    //khởi tạo alarm manager
   await AndroidAlarmManager.initialize();
 
@@ -55,7 +58,10 @@ void main() async {
     exact: true,
   );
   
-
+*/
+TokenManager userToken = TokenManager();
+userToken.initToken();
+FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(MaterialApp(
     navigatorKey: globalNavigatorKey,
     home: MyApp(),
@@ -74,7 +80,25 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  
+  @override
+  void initState() {
+    // TODO: implement initState
+    
+    
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        onMessageOpenedAppHandler(context, message);
+      }
+    });
+
+    FirebaseMessaging.onMessage.listen((message) {
+      onMessageHandler(context, message);
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      onMessageOpenedAppHandler(context, message);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
