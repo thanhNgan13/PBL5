@@ -1,4 +1,5 @@
 import 'package:fire_warning_app/helper/log_out_helper.dart';
+import 'package:fire_warning_app/presenters/logout_presenter.dart';
 import 'package:flutter/material.dart';
 
 import '../login_page.dart';
@@ -21,7 +22,7 @@ class BodyWidget extends StatefulWidget {
 
 class _BodyWidgetState extends State<BodyWidget> {
 
-  LogOutHelper logoutHelper = LogOutHelper();
+  LogOutPresenter logOutPresenter = LogOutPresenter();
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +72,9 @@ class _BodyWidgetState extends State<BodyWidget> {
               ),
               TextButton(
                 onPressed:(){
-                  logoutHelper.disposeAccountData();
+                  
+                   logOutPresenter.logout();
+
                   Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()),);
                 },
                 child: Text("Đăng xuất",

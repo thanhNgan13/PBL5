@@ -11,27 +11,27 @@ import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'presenters/alert_status_presenter.dart';
 import 'package:fire_warning_app/helper/fcm_notification-handler.dart';
 
-
-final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> globalNavigatorKey =
+    GlobalKey<NavigatorState>();
 
 @pragma('vm:entry-point')
 Future<void> checkAlertStatus() async {
-    print("***********************************************AndroidAlarmManager work checkAlertStatus fucntion");
+  print(
+      "***********************************************AndroidAlarmManager work checkAlertStatus fucntion");
 
-    //check alert status from DB
-      AlertStatusPresenter alertStatusPresenter = AlertStatusPresenter();
-      bool isAlert= await alertStatusPresenter.getAlertStatus();
+  //check alert status from DB
+  AlertStatusPresenter alertStatusPresenter = AlertStatusPresenter();
+  bool isAlert = await alertStatusPresenter.getAlertStatus();
 
-      if(isAlert){
-        // create and show Notification Service
-        NotificationService notificationService = NotificationService();
-        await notificationService.initNotification();
-        await notificationService.showNotification(id: 5, title: "Cảnh báo", body: "Hệ thống phát hiện có cháy");
-        print("*******************************************Send noti ");
-  //    }
+  if (isAlert) {
+    // create and show Notification Service
+    NotificationService notificationService = NotificationService();
+    await notificationService.initNotification();
+    await notificationService.showNotification(
+        id: 5, title: "Cảnh báo", body: "Hệ thống phát hiện có cháy");
+    print("*******************************************Send noti ");
+    //    }
   }
- 
-    
 }
 
 void main() async {
@@ -49,10 +49,9 @@ void main() async {
    //khởi tạo alarm manager
   await AndroidAlarmManager.initialize();
 
-  
   await AndroidAlarmManager.periodic(
-    const Duration(seconds: 10), 
-    0, 
+    const Duration(seconds: 10),
+    0,
     checkAlertStatus,
     wakeup: true, // Đánh thức thiết bị nếu nó đang trong chế độ ngủ
     exact: true,
@@ -61,15 +60,14 @@ void main() async {
 */
 TokenManager userToken = TokenManager();
 userToken.initToken();
+
 FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     navigatorKey: globalNavigatorKey,
     home: MyApp(),
   ));
-  
 }
-
-
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -102,7 +100,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
@@ -110,8 +107,7 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home:const WelcomePage(),
-    //    home:const WarningPage(),
+      home: const WelcomePage(),
     );
   }
 }

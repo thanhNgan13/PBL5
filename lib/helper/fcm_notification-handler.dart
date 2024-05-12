@@ -1,4 +1,5 @@
 import 'package:fire_warning_app/helper/local_notification_service.dart';
+import 'package:fire_warning_app/pages/warning_page.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
@@ -34,5 +35,5 @@ Future<void> onMessageHandler(BuildContext context, RemoteMessage message) async
 // Hàm xử lý khi người dùng tập vào thông báo để mở ứng dụng
 void onMessageOpenedAppHandler(BuildContext context, RemoteMessage message) {
   print("thông báo khi người dùng tập vào thông báo: ${message.messageId}");
- // Navigator.of(context).pushNamed('/targetScreen'); // thay '/targetScreen' bằng màn hình đích
+  Navigator.push(context, MaterialPageRoute(builder: (context) => WarningPage()),);
 }

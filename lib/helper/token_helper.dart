@@ -14,7 +14,6 @@ class TokenManager {
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       String? token = await _messaging.getToken();
       print("Firebase Messaging Token: $token");
-      String result="null";
       if(token!=null)
         return token;
       else
