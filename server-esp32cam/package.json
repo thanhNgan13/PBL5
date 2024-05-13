@@ -1,0 +1,19 @@
+{
+  "name": "server-esp32cam",
+  "version": "1.0.0",
+  "description": "receive and share data streams",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.18.2",
+    "firebase": "^10.11.1",
+    "firebase-admin": "^12.1.0",
+    "path": "^0.12.7",
+    "ws": "^7.5.7"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "thanhNgan13",
+  "license": "ISC"
+}
