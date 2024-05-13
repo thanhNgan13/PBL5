@@ -1,0 +1,4 @@
+{
+  "appService.defaultWebAppToDeploy": "undefined/subscriptions/5b92e8f5-3050-4c18-8f47-2e6d92a15ca1/resourceGroups/SERVENODEJS/providers/Microsoft.Web/sites/ServerStremVideo",
+  "appService.deploySubpath": "."
+}
