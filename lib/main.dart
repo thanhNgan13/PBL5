@@ -14,24 +14,33 @@ import 'package:fire_warning_app/helper/fcm_notification-handler.dart';
 final GlobalKey<NavigatorState> globalNavigatorKey =
     GlobalKey<NavigatorState>();
 
+// @pragma('vm:entry-point')
+// Future<void> checkAlertStatus() async {
+//   print(
+//       "***********************************************AndroidAlarmManager work checkAlertStatus fucntion");
+
+//   //check alert status from DB
+//   AlertStatusPresenter alertStatusPresenter = AlertStatusPresenter();
+//   bool isAlert = await alertStatusPresenter.getAlertStatus();
+
+//   if (isAlert) {
+//     // create and show Notification Service
+//     NotificationService notificationService = NotificationService();
+//     await notificationService.initNotification();
+//     await notificationService.showNotification(
+//         id: 5, title: "Cảnh báo", body: "Hệ thống phát hiện có cháy");
+//     print("*******************************************Send noti ");
+//     //    }
+//   }
+// }
+
 @pragma('vm:entry-point')
-Future<void> checkAlertStatus() async {
-  print(
-      "***********************************************AndroidAlarmManager work checkAlertStatus fucntion");
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
 
-  //check alert status from DB
-  AlertStatusPresenter alertStatusPresenter = AlertStatusPresenter();
-  bool isAlert = await alertStatusPresenter.getAlertStatus();
-
-  if (isAlert) {
-    // create and show Notification Service
-    NotificationService notificationService = NotificationService();
-    await notificationService.initNotification();
-    await notificationService.showNotification(
-        id: 5, title: "Cảnh báo", body: "Hệ thống phát hiện có cháy");
-    print("*******************************************Send noti ");
-    //    }
-  }
+  print("Handling a background message: ${message.messageId}");
 }
 
 void main() async {
@@ -58,10 +67,10 @@ void main() async {
   );
   
 */
-TokenManager userToken = TokenManager();
-userToken.initToken();
+  TokenManager userToken = TokenManager();
+  userToken.initToken();
 
-FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     navigatorKey: globalNavigatorKey,
@@ -77,12 +86,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     // TODO: implement initState
-    
-    
+
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       if (message != null) {
         onMessageOpenedAppHandler(context, message);
