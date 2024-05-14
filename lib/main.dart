@@ -15,6 +15,26 @@ import 'presenters/alert_status_presenter.dart';
 final globalNavigatorKey =GlobalKey<NavigatorState>();
 
 
+// @pragma('vm:entry-point')
+// Future<void> checkAlertStatus() async {
+//   print(
+//       "***********************************************AndroidAlarmManager work checkAlertStatus fucntion");
+
+//   //check alert status from DB
+//   AlertStatusPresenter alertStatusPresenter = AlertStatusPresenter();
+//   bool isAlert = await alertStatusPresenter.getAlertStatus();
+
+//   if (isAlert) {
+//     // create and show Notification Service
+//     NotificationService notificationService = NotificationService();
+//     await notificationService.initNotification();
+//     await notificationService.showNotification(
+//         id: 5, title: "Cảnh báo", body: "Hệ thống phát hiện có cháy");
+//     print("*******************************************Send noti ");
+//     //    }
+//   }
+// }
+
 /*
 @pragma('vm:entry-point')
 Future<void> checkAlertStatus() async {
@@ -84,8 +104,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     // TODO: implement initState
-    
-    
+
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       if (message != null) {
         onMessageOpenedAppHandler(context, message);
