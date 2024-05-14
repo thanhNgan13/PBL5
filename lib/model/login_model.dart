@@ -1,5 +1,5 @@
 import 'package:fire_warning_app/helper/check_login_helper.dart';
-import 'package:fire_warning_app/helper/token_helper.dart';
+import 'package:fire_warning_app/helper/fcm_helper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -112,8 +112,8 @@ class LoginModel{
   }
 
   Future<bool> saveUserTokenInDB(String _phone) async {
-  TokenManager userToken = TokenManager();
-  String token=await userToken.initToken();
+  FCMHelper userToken = FCMHelper();
+  String token=await userToken.getToken();
   if(token!="")
   {
      try{

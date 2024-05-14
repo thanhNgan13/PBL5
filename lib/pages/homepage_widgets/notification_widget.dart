@@ -52,6 +52,7 @@ class _MyBodyWidgetState extends State<BodyWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       body: isLoading
       ? Center (child: CircularProgressIndicator())
       : ( Scaffold(
@@ -60,7 +61,7 @@ class _MyBodyWidgetState extends State<BodyWidget> {
           : Container(
             child: Column(
               children: [
-                SizedBox(height: 30,),
+                SizedBox(height: 40,),
                 Text("Lịch sử cảnh báo",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Color(0xffDC4A48)),),
                 Expanded(
                       child: ListView.builder(

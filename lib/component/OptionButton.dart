@@ -19,6 +19,10 @@ class OptionButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(
+          color: const Color.fromARGB(255, 35, 37, 39), // Màu sắc của viền
+          width: 1.0, // Độ dày của viền
+    ),
       ),
       child: InkWell(
         onTap: onPressed,

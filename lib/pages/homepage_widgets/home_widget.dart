@@ -27,7 +27,7 @@ class _BodyWidgetState extends State<BodyWidget> {
         automaticallyImplyLeading: false,//not showing button back
       title: Row(
         children: [
-          ImageIcon(AssetImage("assets/icons/hello.png"),),
+          ImageIcon(AssetImage("assets/icons/hello.png"),color: Colors.white),
           SizedBox(width: 20,),
           Column(
             children: [
@@ -44,16 +44,17 @@ class _BodyWidgetState extends State<BodyWidget> {
             children: [
               Text("Có cháy?",style:TextStyle(fontSize: 24, color: Colors.black,fontWeight: FontWeight.bold),),
               SizedBox(height: 50,),
-              Text("Chạm và giữ 10 giây để gửi cảnh báo đến người thân",style:TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold),),
-              SizedBox(height: 10,),
               ButtonAlertWidget(),
               SizedBox(height: 30,),
+              Text("Chạm và giữ 10 giây",style:TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold),),
+              Text("để phát cảnh báo cho người thân",style:TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold),),
+              /*
               ElevatedButton(onPressed: (){},
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
                   ),
                   child: Text("Hủy",style: TextStyle(color: Color(0xffD9002D),fontSize: 20,fontWeight: FontWeight.bold),)
-              )
+              )*/
 
             ],
           ),

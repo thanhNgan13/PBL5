@@ -23,15 +23,17 @@ class _BodyWidgetState extends State<BodyWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
+        alignment: Alignment.center,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ImageIcon(AssetImage("assets/icons/success.png"),),
-            SizedBox(height: 40,),
-            Text("Xong",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
+            Text("Xong!",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
+            SizedBox(height: 30,),
+            ImageIcon(AssetImage("assets/icons/success.png"),size: 150,color: Color(0xffFF8581),),
+            SizedBox(height: 30,),           
+            Text("Đăng ký tài khoản thành công",style: TextStyle(fontSize: 18,fontStyle: FontStyle.italic)),
             SizedBox(height: 20,),
-            Text("Đăng ký tài khoản thành công"),
             TextButton(
               onPressed:() {Navigator.push(context,MaterialPageRoute(builder: (context) => LoginPage()),);
             },

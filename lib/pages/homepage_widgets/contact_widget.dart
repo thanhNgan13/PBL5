@@ -55,7 +55,7 @@ class _BodyWidgetState extends State<BodyWidget> {
       :Container(
         child: Column(
             children: [
-              SizedBox(height: 30,),
+              SizedBox(height: 40,),
               Text("Danh sách thành viên",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Color(0xffDC4A48)),),
               /*
               Row(

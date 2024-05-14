@@ -3,12 +3,15 @@ import 'dart:async';
 import 'package:fire_warning_app/pages/home_page.dart';
 import 'package:fire_warning_app/presenters/alert_presenter.dart';
 import 'package:flutter/material.dart';
-
+import 'package:fire_warning_app/main.dart';
 class WarningPage extends StatelessWidget {
   const WarningPage({super.key});
+  static const route='/warning-screen';
 
+  
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body:const BodyWidget(),
       );
@@ -24,22 +27,25 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<BodyWidget> {
-   AlertPresenter _alertPresenter=  AlertPresenter();
+
+
+
+   final AlertPresenter _alertPresenter=  AlertPresenter();
 
    double _progressValue=0.0;
   late Timer mt;
 
   letStartCircularProgress(){
   //  command="Press to Start";
-    const oneSec=const Duration(microseconds: 100000);
+    const oneSec=Duration(microseconds: 100000);
     mt= Timer.periodic(oneSec,(mt){
       setState(() {
       //  command="Holding...";
         _progressValue+=0.01;
-        if(_progressValue.toStringAsFixed(1)=='1.1') {//finish 1 round
+        if(_progressValue.toStringAsFixed(1)=='1.01') {//finish 1 round
           //update isAlert in database
           _alertPresenter.updatePersonalAlertStatus();
-          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()),);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()),);
 
           //set = 0
           setState(() {

@@ -30,7 +30,7 @@ class _BodyWidgetState extends State<BodyWidget> {
   void initState() {
     super.initState();
     checkUserLoginStatus();
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 3), () {
     navigateScreen();
   });
 
@@ -93,7 +93,6 @@ class _BodyWidgetState extends State<BodyWidget> {
           ],
         ),
       ),
-      const CircularProgressIndicator(),
       ]
     );
   }

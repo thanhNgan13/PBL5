@@ -202,7 +202,7 @@ class AlertModel{
                 if (value["phone"] == userPhone) { //the phone exists in the collection
                   // Cập nhật trạng thái "isAlerted" thành false
                   DatabaseReference accountRef = accountsRef.child(key); // Tham chiếu đến Account cụ thể
-                  accountRef.update({"isAlerted": true});
+                  accountRef.update({"isAlerted": false});
                 }
               }
           }

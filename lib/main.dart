@@ -1,6 +1,8 @@
-import 'package:fire_warning_app/helper/token_helper.dart';
+import 'package:fire_warning_app/helper/fcm_helper.dart';
 import 'package:fire_warning_app/helper/local_notification_service.dart';
 import 'package:fire_warning_app/model/get_fire_status_db.dart';
+import 'package:fire_warning_app/pages/register_success_page.dart';
+import 'package:fire_warning_app/pages/warning_page.dart';
 import 'package:fire_warning_app/pages/welcome_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -9,11 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
 import 'presenters/alert_status_presenter.dart';
-import 'package:fire_warning_app/helper/fcm_notification-handler.dart';
 
-final GlobalKey<NavigatorState> globalNavigatorKey =
-    GlobalKey<NavigatorState>();
+final globalNavigatorKey =GlobalKey<NavigatorState>();
 
+
+/*
 @pragma('vm:entry-point')
 Future<void> checkAlertStatus() async {
   print(
@@ -33,7 +35,7 @@ Future<void> checkAlertStatus() async {
     //    }
   }
 }
-
+*/
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -58,15 +60,16 @@ void main() async {
   );
   
 */
-TokenManager userToken = TokenManager();
-userToken.initToken();
+await FCMHelper().initNotification();
+runApp(const MyApp());
 
+/*
 FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     navigatorKey: globalNavigatorKey,
     home: MyApp(),
-  ));
+  ));*/
 }
 
 class MyApp extends StatefulWidget {
@@ -77,7 +80,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
+/*
   @override
   void initState() {
     // TODO: implement initState
@@ -97,17 +100,21 @@ class _MyAppState extends State<MyApp> {
       onMessageOpenedAppHandler(context, message);
     });
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 68, 68)),
         useMaterial3: true,
       ),
-      home: const WelcomePage(),
+      navigatorKey: globalNavigatorKey,
+      home: WelcomePage(),
+      routes: { 
+        WarningPage.route:(context) =>const WarningPage(),
+      },
     );
   }
 }
