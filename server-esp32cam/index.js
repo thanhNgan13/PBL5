@@ -12,6 +12,9 @@ admin.initializeApp({
     "https://fire-warning-system-2d9c2-default-rtdb.asia-southeast1.firebasedatabase.app",
 });
 
+// Lấy tham chiếu đến cơ sở dữ liệu
+const db = admin.database();
+
 const app = express();
 const server = http.createServer(app);
 const imageServer = new WebSocket.Server({ port: 8888 });
@@ -97,6 +100,7 @@ app.get("/client/videos/:esp32camID", (req, res) => {
   const esp32camID = req.params.esp32camID;
   // Lấy hostname từ request
   const host = req.hostname;
+  console.log("Host: ", host);
 
   // Kiểm tra xem thiết bị có tồn tại và có hình ảnh không
   if (devicesESP32CAM[esp32camID] && devicesESP32CAM[esp32camID].image) {
@@ -118,7 +122,7 @@ app.get("/client/videos/:esp32camID", (req, res) => {
           <script>
             const img = document.getElementById("videoStream");
             // Tạo kết nối WebSocket đến máy chủ hiện tại
-            const ws = new WebSocket("ws://" + window.location.hostname + ":8999/display");
+            const ws = new WebSocket("wss://" + "hrl4vkc2-5002.asse.devtunnels.ms" + "/display");
             const targetID = "${esp32camID}"; // Sử dụng ID từ URL
 
             ws.onmessage = function (event) {
@@ -164,6 +168,85 @@ app.get("/client/closeLed/:esp32camID", (req, res) => {
   }
 });
 
-server.listen(8999, () => {
-  console.log("HTTP server is running on http://localhost:8999");
+app.get("/client/servo/:esp32camID", (req, res) => {
+  const esp32camID = req.params.esp32camID;
+  const pos = req.query.pos;
+  if (devicesESP32CAM[esp32camID]) {
+    devicesESP32CAM[esp32camID].socket.send(`servo: ${pos}`);
+    res.send(`Servo moved ${pos} post`);
+  } else {
+    res.status(404).send("No ESP32CAM available for this ID");
+  }
+});
+
+app.get("/client/turnOffBuzzer/:esp32camID", (req, res) => {
+  const esp32camID = req.params.esp32camID;
+  if (devicesESP32CAM[esp32camID]) {
+    devicesESP32CAM[esp32camID].socket.send("TURN OFF BUZZER");
+    res.send("Buzzer turned off");
+  } else {
+    res.status(404).send("No ESP32CAM available for this ID");
+  }
+});
+
+app.get("/client/turnOnBuzzer/:esp32camID", (req, res) => {
+  const esp32camID = req.params.esp32camID;
+  if (devicesESP32CAM[esp32camID]) {
+    devicesESP32CAM[esp32camID].socket.send("TURN ON BUZZER");
+    res.send("Buzzer turned on");
+  } else {
+    res.status(404).send("No ESP32CAM available for this ID");
+  }
+});
+
+app.get("/client/test", (req, res) => {
+  res.send("Test");
+});
+
+// Hàm để lắng nghe thay đổi trạng thái của tất cả tài khoản
+function listenToAllUserStatusChanges() {
+  const accountsRef = db.ref("Accounts");
+
+  // Lắng nghe các tài khoản mới được thêm vào
+  accountsRef.on("child_added", (snapshot) => {
+    const userId = snapshot.key;
+    listenToStatusChange(userId);
+  });
+
+  // Lắng nghe các thay đổi trên các tài khoản hiện có
+  accountsRef.on("child_changed", (snapshot) => {
+    const userId = snapshot.key;
+    listenToStatusChange(userId);
+  });
+}
+
+const userStatus = {}; // Lưu trạng thái cũ của mỗi user
+
+function listenToStatusChange(userId) {
+  const refAccount = db.ref(`Accounts/${userId}`);
+  refAccount.on("value", (snapshot) => {
+    const data = snapshot.val();
+    const isAlertedNow = data.isAlerted === "true";
+
+    if (userStatus[userId] === undefined) {
+      if (isAlertedNow) {
+        const esp32camID = data.code;
+        console.log("Sending alert to ESP32CAM" + esp32camID);
+        devicesESP32CAM[esp32camID].socket.send("TURN ON BUZZER");
+      }
+    } else if (!userStatus[userId].alerted && isAlertedNow) {
+      const esp32camID = data.code;
+      console.log("Sending alert to ESP32CAM" + esp32camID);
+      devicesESP32CAM[esp32camID].socket.send("TURN ON BUZZER");
+    }
+    // Cập nhật trạng thái mới
+    userStatus[userId] = { alerted: isAlertedNow };
+  });
+}
+
+server.listen(5002, () => {
+  listenToAllUserStatusChanges();
+  console.log(
+    "HTTP server is running on https://hrl4vkc2-5002.asse.devtunnels.ms/"
+  );
 });

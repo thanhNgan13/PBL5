@@ -58,45 +58,33 @@ function broadcastMessage(message) {
 wss.on("connection", function connection(ws) {
   console.log("A new client connected.");
 
-  let statusCO_1, statusCO_2, statusCO_3, statusCO_4;
-  const ids = [];
+  const ids = ["ESP8266_1", "ESP8266_2", "ESP8266_3", "ESP8266_4"];
+  const statuses = {};
+  let activeTrueIds = []; // Mảng lưu giữ các ID có trạng thái true
 
-  const refESP8266_1 = db.ref("ESP8266_1/Outputs/Status_CO");
-  ids[1] = refESP8266_1.parent.parent.key;
-  refESP8266_1.on("value", (snapshot) => {
-    statusCO_1 = snapshot.val();
-  });
+  // Hàm gửi các ID mà có trạng thái true, chỉ khi có thay đổi
+  function updateAndSendActiveTrueIds(id) {
+    if (statuses[id] === "true" && !activeTrueIds.includes(id)) {
+      // Thêm vào mảng nếu trạng thái là true và chưa có trong mảng
+      activeTrueIds.push(id);
+    } else if (statuses[id] === "false" && activeTrueIds.includes(id)) {
+      // Loại bỏ khỏi mảng nếu trạng thái chuyển thành false
+      activeTrueIds = activeTrueIds.filter((item) => item !== id);
+    }
+    ws.send(JSON.stringify(activeTrueIds)); // Gửi mảng cập nhật qua WebSocket
+  }
 
-  const refESP8266_2 = db.ref("ESP8266_2/Outputs/Status_CO");
-  ids[2] = refESP8266_2.parent.parent.key;
-  refESP8266_2.on("value", (snapshot) => {
-    statusCO_2 = snapshot.val();
-  });
-
-  const refESP8266_3 = db.ref("ESP8266_3/Outputs/Status_CO");
-  ids[3] = refESP8266_3.parent.parent.key;
-  refESP8266_3.on("value", (snapshot) => {
-    statusCO_3 = snapshot.val();
-  });
-
-  const refESP8266_4 = db.ref("ESP8266_4/Outputs/Status_CO");
-  ids[4] = refESP8266_4.parent.parent.key;
-  refESP8266_4.on("value", (snapshot) => {
-    statusCO_4 = snapshot.val();
-  });
-
-  const intervalId = setInterval(() => {
-    [statusCO_1, statusCO_2, statusCO_3, statusCO_4].forEach(
-      (status, index) => {
-        if (status === "WARNING!!!") {
-          if (ws.readyState === WebSocket.OPEN) {
-            console.log("Sending warning message to client");
-            ws.send(`${ids[index + 1]}`);
-          }
-        }
+  ids.forEach((id, index) => {
+    const ref = db.ref(`${id}/Outputs/Status_CO`);
+    ref.on("value", (snapshot) => {
+      const previousStatus = statuses[id];
+      statuses[id] = snapshot.val();
+      // Chỉ gửi cập nhật nếu có sự thay đổi trạng thái
+      if (statuses[id] !== previousStatus) {
+        updateAndSendActiveTrueIds(id);
       }
-    );
-  }, 1000); // Adjusted interval to 1000 milliseconds
+    });
+  });
 
   ws.on("message", function incoming(message) {
     console.log("Received: %s", message);
@@ -109,6 +97,6 @@ wss.on("connection", function connection(ws) {
   });
 });
 
-server.listen(8888, () => {
-  console.log("Server is running on http://localhost:8888");
+server.listen(8989, () => {
+  console.log("Server is running on http://localhost:8989");
 });

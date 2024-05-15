@@ -81,6 +81,7 @@ function listenToAllUserStatusChanges() {
 }
 
 const userStatus = {}; // Lưu trạng thái cũ của mỗi user
+const checkInterval = 20 * 1000; // 20 giây
 
 function listenToStatusChange(userId) {
   const refAccount = db.ref(`Accounts/${userId}`);
@@ -105,18 +106,43 @@ function listenToStatusChange(userId) {
   });
 }
 
+function periodicallyCheckAndAlert() {
+  const accountsRef = db.ref("Accounts");
+  accountsRef.once("value", (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      const userId = childSnapshot.key;
+      const userData = childSnapshot.val();
+      const isAlertedNow = userData.isAlerted === "true";
+      const timeSinceLastAlert =
+        Date.now() - (userStatus[userId]?.lastAlerted || 0);
+
+      if (
+        isAlertedNow &&
+        (timeSinceLastAlert > checkInterval || !userStatus[userId]?.lastAlerted)
+      ) {
+        sendAlert(userId, userData.token);
+        userStatus[userId] = { alerted: true, lastAlerted: Date.now() };
+      }
+    });
+  });
+}
+
+// Đặt hàm kiểm tra định kỳ mỗi 10 phút
+setInterval(periodicallyCheckAndAlert, 10 * 60 * 1000);
+
 function sendAlert(userId, token) {
   console.log(`token: ${token}`);
   const message = {
-    notification: {
-      title: "Thông báo cháy nổ",
-      body: "Hiện tại trong phòng đang phát hiện ra có đám cháy. Vui lòng kiểm tra lại và gọi đến số 113 để được hỗ trợ kịp thời!!!",
+    data: {
+      title: "Fire Alert",
+      body: "There is a fire near your location",
     },
 
     android: {
       notification: {
         icon: "stock_ticker_update",
         color: "#7e55c3",
+        sound: "notification",
       },
     },
     token: token,
@@ -133,6 +159,6 @@ function sendAlert(userId, token) {
 }
 
 app.listen(7777, function () {
-  listenToAllUserStatusChanges();
+  setInterval(periodicallyCheckAndAlert, 20 * 1000); // 10 phút
   console.log("Server started on port 7777");
 });

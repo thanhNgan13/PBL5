@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cordova-plugin-firebasex": "^16.5.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "firebase-admin": "^12.1.0"
