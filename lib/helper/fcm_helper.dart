@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:fire_warning_app/helper/local_notification_service.dart';
 import 'package:fire_warning_app/main.dart';
 import 'package:fire_warning_app/pages/warning_page.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,31 +12,41 @@ Future<void> handleBackgroundMessage(RemoteMessage message) async{
   print('Title: ${message.notification?.title}');
   print('Body: ${message.notification?.body}');
   print('Payload: ${message.data}');
+
+  await  Future.delayed(const Duration(milliseconds: 200), () =>globalNavigatorKey.currentState?.pushNamed(WarningPage.route));
+
+  
+  await LocalNotificationService.showNotificationWithPayload(
+        id: 100, title: "Cảnh báo", body: "Cháy",payLoad: 'payload');
+  
 }
+
 
 class FCMHelper {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
    final _androidChannel=const AndroidNotificationChannel(
-    '1',
+    'high_importance_channel',
      'high importce notifications',
      description: 'this channel is used for important notification',
      importance: Importance.max,
      sound: RawResourceAndroidNotificationSound('notification'),
+      playSound: false,
      );
-
+     
+  
   final _localNotification=FlutterLocalNotificationsPlugin();
 
-  //open WarningPage
-  void handleMessage(RemoteMessage? message){
+  
+  Future<void> handleMessageWithPayload(RemoteMessage? message) async {
     if(message==null) return ;
 
+     await  Future.delayed(const Duration(milliseconds: 200), () =>globalNavigatorKey.currentState?.pushNamed(WarningPage.route));
 
-    globalNavigatorKey.currentState?.pushNamed(
-      WarningPage.route,
-    );
+    await LocalNotificationService.showNotificationWithPayload(
+        id: 101, title: "Cảnh báo closed", body: "Hệ thống phát hiện có cháy",payLoad: 'papload');
   }
-
+  
   //create local notification
   Future initLocalNotification()async{
     const android=AndroidInitializationSettings('@drawable/logo_app');
@@ -44,8 +55,6 @@ class FCMHelper {
     await _localNotification.initialize(
       setting,
       onDidReceiveNotificationResponse:(payload){
-        final message=RemoteMessage.fromMap(jsonDecode(payload as String));
-        handleMessage(message);
       },
     );
 
@@ -58,23 +67,29 @@ class FCMHelper {
   Future initPushNotifications()async{
     await FirebaseMessaging.instance
       .setForegroundNotificationPresentationOptions(
-        alert: true,
+        alert: false,
         badge: true,
         sound: true,
       );
+
+   
+
     //handle message when app is closed
-    FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
+    FirebaseMessaging.instance.getInitialMessage().then(handleMessageWithPayload);
 
     //handle message when app is on background and user click on notification
-    FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
+    FirebaseMessaging.onMessageOpenedApp.listen(handleMessageWithPayload);
 
     //handle message when app is on background 
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
 
     //handle message when app is opened
     FirebaseMessaging.onMessage.listen((message){
+      
       final notification=message.notification;
       if(notification==null) return;
+
+       globalNavigatorKey.currentState?.pushNamed(WarningPage.route);    
 
       _localNotification.show(
         notification.hashCode,
@@ -93,8 +108,8 @@ class FCMHelper {
           ),
         ),
         payload: jsonEncode(message.toMap()),
-      ).then((_) => handleMessage(message));
-
+      );
+      
     });
   }
 
@@ -103,6 +118,8 @@ class FCMHelper {
       String? token = await _messaging.getToken();
       print("Firebase Messaging Token: $token");
       
+      
+
       initPushNotifications();
       initLocalNotification();
     }
@@ -116,4 +133,8 @@ class FCMHelper {
     }
     return "";
   }
+
+
 }
+
+

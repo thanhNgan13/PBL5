@@ -1,6 +1,6 @@
 import 'package:fire_warning_app/component/OptionButton.dart';
 import 'package:fire_warning_app/pages/IoT/VideoPages/VideoFromServer.dart';
-import 'package:fire_warning_app/pages/fire_fighting_knowledge.dart';
+import 'package:fire_warning_app/pages/fire_fighting_knowledge_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';

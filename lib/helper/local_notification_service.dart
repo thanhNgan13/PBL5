@@ -1,13 +1,21 @@
 import 'package:fire_warning_app/main.dart';
 import 'package:fire_warning_app/pages/warning_page.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:rxdart/rxdart.dart';
 
 
-class NotificationService{
-  final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
-  
-  Future<void> initNotification() async{
+class LocalNotificationService{
+ static final FlutterLocalNotificationsPlugin _localNotificationService = FlutterLocalNotificationsPlugin();
+static FlutterLocalNotificationsPlugin get localNotificationService => _localNotificationService;
+  static final onClickNotification=BehaviorSubject<String>();
+
+  //on tap on notification
+static void onTapNotification(NotificationResponse details) async {
+    onClickNotification.add(details.payload!);
+  }
+
+
+ static Future<void> initNotification() async{
     AndroidInitializationSettings initializationSettingsAndroid=const AndroidInitializationSettings('logo_app');
 
     var initializationSettingsIOS=DarwinInitializationSettings(
@@ -17,47 +25,37 @@ class NotificationService{
       onDidReceiveLocalNotification: (id, title, body, payload) async {} );
 
     var initializationSettings=InitializationSettings(
-      android: initializationSettingsAndroid, iOS: initializationSettingsIOS
+      android: initializationSettingsAndroid, 
+      iOS: initializationSettingsIOS
     );
-    await _notificationsPlugin.initialize(initializationSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async{
-        
-        if (notificationResponse.actionId == '0') {
-          print("click vào open ");
-      //open warning page
-         // Ensure the context is available or use a global navigator key
-        Navigator.of(globalNavigatorKey.currentContext!).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => WarningPage()),
-          (route) => false,
-        );
-        }
-        else{
-          print("lỗi click");
-        }
-      }
+
+    await _localNotificationService.initialize(
+      initializationSettings,
+      onDidReceiveBackgroundNotificationResponse: onTapNotification,
+      onDidReceiveNotificationResponse: onTapNotification,
+      
     );
   }
 
-  notificationDetails(){
+ static notificationDetails(){
     return const NotificationDetails(
       android: AndroidNotificationDetails(
-        'idnoti', 
-        "namenoti",
+        'myidchannel', 
+        "mynamechannel",
+        channelDescription: 'mydescription',
         importance: Importance.max,
         priority: Priority.high,
         playSound: true,
         sound: RawResourceAndroidNotificationSound('notification'),
-        actions: <AndroidNotificationAction>[
-        AndroidNotificationAction("0", 'Mở ứng dụng', showsUserInterface: true,),
-      ],
-      
         ),
       iOS: DarwinNotificationDetails(),
     );
   }
-  Future showNotification(
-    {int id=0,String?title,String? body,String? payLoad} ) async {
-      return _notificationsPlugin.show(id, title, body,await notificationDetails());
+  
+ static Future showNotificationWithPayload(
+    {int id=0,String?title,String? body, String? payLoad} ) async {
+      final details=await notificationDetails();
+      return _localNotificationService.show(id, title, body,details,payload: payLoad);
     }
   
 }

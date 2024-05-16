@@ -22,9 +22,11 @@ class LogoutModel{
         if( dataSnapshot.value!=null){//Collection Accounts have data
           Map<dynamic, dynamic>existingAccountsData = dataSnapshot.value as Map<dynamic,dynamic>;
           for (var entry in existingAccountsData!.entries){
+             var key = entry.key;
             var value = entry.value;
             if (value["phone"] == _phone) { //the code exists in the collection
-              accountsRef.update({"token": ""});
+               DatabaseReference accountRef = accountsRef.child(key); // Tham chiếu đến Account cụ thể
+              accountRef.update({"token": "null"});
             }
           }
         }

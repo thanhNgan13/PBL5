@@ -42,7 +42,7 @@ class _MyWidgetState extends State<BodyWidget> {
       setState(() {
       //  command="Holding...";
         _progressValue+=0.01;
-        if(_progressValue.toStringAsFixed(1)=='1.01') {//finish 1 round
+        if(_progressValue.toStringAsFixed(1)=='1.1') {//finish 1 round
           //update isAlert in database
           _alertPresenter.updatePersonalAlertStatus();
           Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()),);
@@ -53,6 +53,7 @@ class _MyWidgetState extends State<BodyWidget> {
         //    command = "Start";
             mt.cancel();
           });
+
         }
       });
     });

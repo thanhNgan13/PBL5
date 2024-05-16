@@ -1,3 +1,4 @@
+import 'package:fire_warning_app/pages/login_page.dart';
 import 'package:fire_warning_app/pages/otp_page.dart';
 import 'package:fire_warning_app/pages/register_success_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -65,8 +66,9 @@ class _BodyWidgetState extends State<BodyWidget> implements RegisterInterface {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(height:50),
               //tite
-              Text('Đăng ký tài khoản', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black,)),
+              Text('ĐĂNG KÝ TÀI KHOẢN', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black,)),
             //logo
               Container(width: 200, padding: const EdgeInsets.all(20.0), child: Image.asset('assets/icons/logo_red.png'),), //Container
             //form
@@ -173,7 +175,14 @@ class _BodyWidgetState extends State<BodyWidget> implements RegisterInterface {
                       ),
                       Container(
                         alignment: Alignment.center,
-                        child: Text("Đã có tài khoản?", style: TextStyle(fontSize: 14, color: Color(0xffDC4A48), fontStyle: FontStyle.italic,),),
+                        child: GestureDetector(
+                          onTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginPage()),
+                          );
+                        },
+                          child: Text("Đã có tài khoản?", style: TextStyle(fontSize: 14, color: Color(0xffDC4A48), fontStyle: FontStyle.italic,),)),
                       ),
                     ],
                   )
