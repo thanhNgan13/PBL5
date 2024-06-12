@@ -87,7 +87,7 @@ function listenToStatusChange(userId) {
   const refAccount = db.ref(`Accounts/${userId}`);
   refAccount.on("value", (snapshot) => {
     const data = snapshot.val();
-    const isAlertedNow = data.isAlerted === "true";
+    const isAlertedNow = data.isAlerted === true;
 
     // Kiểm tra nếu đây là lần lắng nghe đầu tiên hoặc trạng thái thay đổi từ "false" sang "true"
     if (userStatus[userId] === undefined) {
@@ -112,7 +112,7 @@ function periodicallyCheckAndAlert() {
     snapshot.forEach((childSnapshot) => {
       const userId = childSnapshot.key;
       const userData = childSnapshot.val();
-      const isAlertedNow = userData.isAlerted === "true";
+      const isAlertedNow = userData.isAlerted === true;
       const timeSinceLastAlert =
         Date.now() - (userStatus[userId]?.lastAlerted || 0);
 
