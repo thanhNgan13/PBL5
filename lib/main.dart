@@ -14,8 +14,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'presenters/alert_status_presenter.dart';
 
-final globalNavigatorKey =GlobalKey<NavigatorState>();
-
+final globalNavigatorKey = GlobalKey<NavigatorState>();
 
 /*
 @pragma('vm:entry-point')
@@ -62,15 +61,11 @@ void main() async {
   );
   
 */
-await LocalNotificationService.initNotification();
+  await LocalNotificationService.initNotification();
 
+  await FCMHelper().initNotification();
 
-await FCMHelper().initNotification();
-
-
-
-
-runApp(const MyApp());
+  runApp(const MyApp());
 
 /*
 FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
@@ -109,17 +104,19 @@ class _MyAppState extends State<MyApp> {
     });
   }
 */
- bool didNotificationLaunchApp = false;
+  bool didNotificationLaunchApp = false;
 
-@override
-void initState(){
-  listenToNotification();
-  checkIfAppLaunchedViaNotification();
-  super.initState();
-}
-Future<void> checkIfAppLaunchedViaNotification() async {
+  @override
+  void initState() {
+    listenToNotification();
+    checkIfAppLaunchedViaNotification();
+    super.initState();
+  }
+
+  Future<void> checkIfAppLaunchedViaNotification() async {
     final NotificationAppLaunchDetails? notificationAppLaunchDetails =
-        await LocalNotificationService.localNotificationService.getNotificationAppLaunchDetails();
+        await LocalNotificationService.localNotificationService
+            .getNotificationAppLaunchDetails();
     if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
       setState(() {
         didNotificationLaunchApp = true;
@@ -127,12 +124,13 @@ Future<void> checkIfAppLaunchedViaNotification() async {
       // You can navigate to desired page based on notification details
     }
   }
-listenToNotification(){
-  print("Listening to notification");
-  LocalNotificationService.onClickNotification.stream.listen((event){
-    globalNavigatorKey.currentState?.pushNamed(WarningPage.route);
-  });
-}
+
+  listenToNotification() {
+    print("Listening to notification");
+    LocalNotificationService.onClickNotification.stream.listen((event) {
+      globalNavigatorKey.currentState?.pushNamed(WarningPage.route);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,14 +138,15 @@ listenToNotification(){
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 68, 68)),
+        colorScheme:
+            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 68, 68)),
         useMaterial3: true,
       ),
       navigatorKey: globalNavigatorKey,
-      home: didNotificationLaunchApp?WarningPage(): WelcomePage(),
+      home: didNotificationLaunchApp ? WarningPage() : WelcomePage(),
       //home: FireFightingKnowledgePage(),
-      routes: { 
-        WarningPage.route:(context) =>const WarningPage(),
+      routes: {
+        WarningPage.route: (context) => const WarningPage(),
       },
     );
   }
