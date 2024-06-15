@@ -1,4 +1,6 @@
 import 'package:fire_warning_app/component/OptionButton.dart';
+import 'package:fire_warning_app/pages/IoT/VDK_CK/cotrol_door_motor.dart';
+import 'package:fire_warning_app/pages/IoT/VDK_CK/home_page_vdk.dart';
 import 'package:fire_warning_app/pages/IoT/VideoPages/VideoFromServer.dart';
 import 'package:fire_warning_app/pages/fire_fighting_knowledge_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,11 +41,11 @@ class _BodyWidgetState extends State<BodyWidget> {
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             )),
         body: Container(
-           decoration: const BoxDecoration(color: Color.fromARGB(255, 255, 255, 255)),
+          decoration:
+              const BoxDecoration(color: Color.fromARGB(255, 255, 255, 255)),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
             child: Container(
-             
               child: Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: Column(
@@ -69,17 +71,16 @@ class _BodyWidgetState extends State<BodyWidget> {
                                   builder: (context) => StatusCO()));
                         }),
                     const SizedBox(height: 20),
-                        OptionButton(
+                    OptionButton(
                         title: 'Kiến thức xử lý khi có cháy',
                         iconUrl: 'assets/icons/firefighting.png',
                         onPressed: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => FireFightingKnowledgePage()));
+                                  builder: (context) =>
+                                      FireFightingKnowledgePage()));
                         }),
-                    const SizedBox(height: 20),
-                    
                   ],
                 ),
               ),
