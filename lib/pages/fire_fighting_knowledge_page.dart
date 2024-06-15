@@ -62,7 +62,7 @@ class _MyBodyWidgetState extends State<BodyWidget> {
                     Image.asset('assets/images/fire_knowledge.jpg'),
                 ],),
             
-                SizedBox(height: 40,),
+                SizedBox(height: 30,),
                 Center(
                   child:Text('KỸ NĂNG BẢO VỆ CƠ THỂ',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Color(0xffDC4A48)),),
                 ),

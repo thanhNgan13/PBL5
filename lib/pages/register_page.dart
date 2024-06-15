@@ -1,5 +1,6 @@
 import 'package:fire_warning_app/pages/login_page.dart';
 import 'package:fire_warning_app/pages/otp_page.dart';
+import 'package:fire_warning_app/pages/qr_scanner_page.dart';
 import 'package:fire_warning_app/pages/register_success_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -131,6 +132,9 @@ class _BodyWidgetState extends State<BodyWidget> implements RegisterInterface {
                             children: [
                               IconButton(icon: Image.asset("assets/icons/qr_code.png"),
                                 onPressed:(){
+                                  Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) => QRScannerPage()),
+                                  );
                                 },
                               ),
                               Text("Quét QR", style: TextStyle(fontSize: 13, color: Color(0xff3C3C3C), fontStyle: FontStyle.italic,fontWeight: FontWeight.bold),),

@@ -1,5 +1,6 @@
 import 'package:fire_warning_app/helper/log_out_helper.dart';
 import 'package:fire_warning_app/helper/shared_preference_helper.dart';
+import 'package:fire_warning_app/pages/qr_generate_page.dart';
 import 'package:fire_warning_app/presenters/logout_presenter.dart';
 import 'package:flutter/material.dart';
 
@@ -24,15 +25,16 @@ class BodyWidget extends StatefulWidget {
 class _BodyWidgetState extends State<BodyWidget> {
 
   SharedPreferenceHelper sharedPreferenceHelper= SharedPreferenceHelper();
+  String data="";
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
+   
   }
 
   LogOutPresenter logOutPresenter = LogOutPresenter();
-
+  
   @override
   Widget build(BuildContext context) {
     Size screenSize=MediaQuery.sizeOf(context);
@@ -58,7 +60,7 @@ class _BodyWidgetState extends State<BodyWidget> {
         padding: const  EdgeInsets.fromLTRB(0, 20, 0, 0),
         child: Container(
           child: Column(
-            children: [
+            children: [/*
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
                 child: Container(
@@ -79,11 +81,16 @@ class _BodyWidgetState extends State<BodyWidget> {
                     ),
                   ),
                 ),
-              ),
+              ),*/
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
                 child: InkWell(
-                  onTap: () {
+                  onTap: () async {
+                    String userCode = await sharedPreferenceHelper.getUserCode();
+                    Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => QRGeneratePage(userCode: userCode,)),
+                    );
+/*
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -127,7 +134,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                         );
                       },
                     );
-
+*/
                   },
                   child: Container(
                     width: screenSize.width,
