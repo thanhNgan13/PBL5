@@ -16,7 +16,7 @@
 
 
     <application
-        android:label="fire_warning_app"
+        android:label="Fire Alert"
         android:name="${applicationName}"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
