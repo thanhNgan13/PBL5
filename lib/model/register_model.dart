@@ -64,7 +64,7 @@ class RegisterModel {
     try{
       DatabaseReference accountsRef = dbRef.child("Accounts");
       DatabaseEvent event = await accountsRef.once();
-      if (event.snapshot.exists) { // Collection Accounts exists
+      if (event.snapshot.exists) { // Collection Accounts exists 
         DataSnapshot dataSnapshot = event.snapshot;
 
         //get the existing code data

@@ -1,6 +1,9 @@
 import 'package:fire_warning_app/helper/log_out_helper.dart';
 import 'package:fire_warning_app/helper/shared_preference_helper.dart';
+import 'package:fire_warning_app/model/Account.dart';
+import 'package:fire_warning_app/pages/edit_profile_page.dart';
 import 'package:fire_warning_app/pages/qr_generate_page.dart';
+import 'package:fire_warning_app/presenters/account_presenter.dart';
 import 'package:fire_warning_app/presenters/logout_presenter.dart';
 import 'package:flutter/material.dart';
 
@@ -34,6 +37,7 @@ class _BodyWidgetState extends State<BodyWidget> {
   }
 
   LogOutPresenter logOutPresenter = LogOutPresenter();
+  AccountPresenter accountPresenter=AccountPresenter();
   
   @override
   Widget build(BuildContext context) {
@@ -60,28 +64,38 @@ class _BodyWidgetState extends State<BodyWidget> {
         padding: const  EdgeInsets.fromLTRB(0, 20, 0, 0),
         child: Container(
           child: Column(
-            children: [/*
+            children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
-                child: Container(
-                  width: screenSize.width,
-                  decoration: BoxDecoration(
-                    color: Color(0xffFF8581),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                    child: Row(
-                      children: [
-                        Image(image: AssetImage('assets/icons/edit.png'),),
-                        SizedBox(width: 10,),
-                        Text("Thay đổi thông tin cá nhân",style:TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                child: InkWell(
+                  onTap: () async {
+                    Account? currentAccount=await accountPresenter.getCurrentUserAccount();
+                    if(currentAccount!=null){
+                      Navigator.push(context,
+                        MaterialPageRoute(builder: (context) =>EditProfilePage(userName: currentAccount.name,userPhone:currentAccount.phone)),
+                      );
+                    }
+                  },
+                  child: Container(
+                    width: screenSize.width,
+                    decoration: BoxDecoration(
+                      color: Color(0xffFF8581),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                      child: Row(
+                        children: [
+                          Image(image: AssetImage('assets/icons/edit.png'),),
+                          SizedBox(width: 10,),
+                          Text("Thay đổi thông tin cá nhân",style:TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),*/
+              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
                 child: InkWell(

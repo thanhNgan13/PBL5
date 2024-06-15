@@ -1,5 +1,5 @@
 class MyNotification{
   String alertBy;
-  DateTime alertAt;
+  String alertAt;
   MyNotification(this.alertBy,this.alertAt);
 }

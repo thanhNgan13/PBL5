@@ -60,6 +60,7 @@ dependencies:
   pretty_qr_code: ^3.3.0
   web_socket_channel: ^3.0.0
   flutter_web_socket: ^1.0.5
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

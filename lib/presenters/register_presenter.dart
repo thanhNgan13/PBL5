@@ -63,7 +63,7 @@ class RegisterPresenter
   Future<bool> checkValidInfor(String phone,String code) async {
     if(await _model.isExistingPhone(phone) == true){
         interface?.registerError("Số điện thoại đã được đăng ký");
-        return false;
+        return false; 
     }else{
       if(await _model.isExistingCode(code) == false){
         interface?.registerError("Mã đăng ký không tồn tại");

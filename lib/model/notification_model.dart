@@ -1,6 +1,7 @@
 import 'package:fire_warning_app/model/MyNotification.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:intl/intl.dart';
 
 class NotificationModel{
   late DatabaseReference dbRef;
@@ -31,11 +32,15 @@ class NotificationModel{
                 for(var alert in value["alerts"]){
                   //get alertAt and alertBy
                   String alertBy = alert["alertBy"];
+
                   String alertAtString = alert["alertAt"];
+
                   DateTime alertAt = DateTime.parse(alertAtString);
+                  String formattedDate = DateFormat('HH:mm dd/MM/yyyy').format(alertAt);
+                  print(formattedDate);
 
                   //add new noti to listNoti
-                  listNoti.add(MyNotification(alertBy, alertAt));
+                  listNoti.add(MyNotification(alertBy, formattedDate));
                 }
               }
             }
