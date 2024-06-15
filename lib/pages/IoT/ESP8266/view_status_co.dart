@@ -10,60 +10,35 @@ class StatusCO extends StatefulWidget {
 }
 
 class _StatusCOState extends State<StatusCO> {
-  final DatabaseReference _database1 = FirebaseDatabase.instanceFor(
-          app: Firebase.app(),
-          databaseURL:
-              "https://fire-warning-system-2d9c2-default-rtdb.asia-southeast1.firebasedatabase.app")
-      .ref()
-      .child('Sensor/Pbl50001/ESP8266_1/');
-  final DatabaseReference _database2 = FirebaseDatabase.instanceFor(
-          app: Firebase.app(),
-          databaseURL:
-              "https://fire-warning-system-2d9c2-default-rtdb.asia-southeast1.firebasedatabase.app")
-      .ref()
-      .child('Sensor/Pbl50001/ESP8266_2/');
-  final DatabaseReference _database3 = FirebaseDatabase.instanceFor(
-          app: Firebase.app(),
-          databaseURL:
-              "https://fire-warning-system-2d9c2-default-rtdb.asia-southeast1.firebasedatabase.app")
-      .ref()
-      .child('Sensor/Pbl50001/ESP8266_3/');
-  final DatabaseReference _database4 = FirebaseDatabase.instanceFor(
-          app: Firebase.app(),
-          databaseURL:
-              "https://fire-warning-system-2d9c2-default-rtdb.asia-southeast1.firebasedatabase.app")
-      .ref()
-      .child('Sensor/Pbl50001/ESP8266_4/');
+  final String databaseURL =
+      "https://fire-warning-system-2d9c2-default-rtdb.asia-southeast1.firebasedatabase.app";
+  final String familyID = "Pbl50001";
 
-  // Track previous status
-  Map<String, bool> _previousStatus = {
-    'ESP8266_1': false,
-    'ESP8266_2': false,
-    'ESP8266_3': false,
-    'ESP8266_4': false,
-  };
+  late final List<DatabaseReference> _databases;
+  late final Map<String, DatabaseReference> _databaseMap;
+  final Map<String, bool> _previousStatus = {};
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Trạng Thái Khí CO'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
-        child: GridView.count(
-          crossAxisCount: 2,
-          childAspectRatio: MediaQuery.of(context).size.width /
-              (MediaQuery.of(context).size.height - kToolbarHeight - 16.0),
-          children: [
-            _buildStatusCard(_database1, 'ESP8266_1'),
-            _buildStatusCard(_database2, 'ESP8266_2'),
-            _buildStatusCard(_database3, 'ESP8266_3'),
-            _buildStatusCard(_database4, 'ESP8266_4'),
-          ],
-        ),
-      ),
+  void initState() {
+    super.initState();
+    _databases = List.generate(
+      4,
+      (index) => FirebaseDatabase.instanceFor(
+        app: Firebase.app(),
+        databaseURL: databaseURL,
+      ).ref().child('Sensor/$familyID/ESP8266_${index + 1}/'),
     );
+
+    _databaseMap = {
+      'Cảm biến 1': _databases[0],
+      'Cảm biến 2': _databases[1],
+      'Cảm biến 3': _databases[2],
+      'Cảm biến 4': _databases[3],
+    };
+
+    for (var label in _databaseMap.keys) {
+      _previousStatus[label] = false;
+    }
   }
 
   void _showAlertDialog(String sensor) {
@@ -118,7 +93,7 @@ class _StatusCOState extends State<StatusCO> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    '$label',
+                    label,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
@@ -135,6 +110,33 @@ class _StatusCOState extends State<StatusCO> {
           return Center(child: CircularProgressIndicator());
         }
       },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xffDC4A48),
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+        title: const Text(
+          'Tình trạng không khí',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: GridView.count(
+          crossAxisCount: 2,
+          childAspectRatio: MediaQuery.of(context).size.width /
+              (MediaQuery.of(context).size.height - kToolbarHeight - 16.0),
+          children: _databaseMap.entries
+              .map((entry) => _buildStatusCard(entry.value, entry.key))
+              .toList(),
+        ),
+      ),
     );
   }
 }

@@ -10,7 +10,6 @@ import '../presenters/register_presenter.dart';
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,16 +28,15 @@ class BodyWidget extends StatefulWidget {
 class _BodyWidgetState extends State<BodyWidget> implements RegisterInterface {
   late RegisterPresenter registerPresenter;
 
-  final nameController=TextEditingController();
-  final phoneController=TextEditingController();
-  final codeController=TextEditingController();
-
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
+  final codeController = TextEditingController();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    registerPresenter=RegisterPresenter(this);
+    registerPresenter = RegisterPresenter(this);
 
     //listen textchange of TextFormField
     nameController.addListener(() {
@@ -66,63 +64,84 @@ class _BodyWidgetState extends State<BodyWidget> implements RegisterInterface {
       child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height:50),
-              //tite
-              Text('ĐĂNG KÝ TÀI KHOẢN', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black,)),
+          children: [
+            SizedBox(height: 50),
+            //tite
+            Text('ĐĂNG KÝ TÀI KHOẢN',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                )),
             //logo
-              Container(width: 200, padding: const EdgeInsets.all(20.0), child: Image.asset('assets/icons/logo_red.png'),), //Container
+            Container(
+              width: 200,
+              padding: const EdgeInsets.all(20.0),
+              child: Image.asset('assets/icons/logo_red.png'),
+            ), //Container
             //form
-              Container(padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
-                      child: StreamBuilder<String>( //user StreamBuilder to set valid to errorText from bloc
+            Container(
+              padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
+                    child: StreamBuilder<String>(
+                        //user StreamBuilder to set valid to errorText from bloc
                         stream: registerPresenter.nameStream,
                         builder: (context, snapshot) {
                           return TextFormField(
                             controller: nameController,
                             style: TextStyle(fontSize: 18, color: Colors.black),
-                            decoration: InputDecoration(labelText: "Họ và tên", labelStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xff5C6268)),
-                            errorText:snapshot.data ),
+                            decoration: InputDecoration(
+                                labelText: "Họ và tên",
+                                labelStyle: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xff5C6268)),
+                                errorText: snapshot.data),
                           );
-                        }
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
-                      child: StreamBuilder<String>(
+                        }),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
+                    child: StreamBuilder<String>(
                         stream: registerPresenter.phoneStream,
                         builder: (context, snapshot) {
                           return TextFormField(
                             controller: phoneController,
                             style: TextStyle(fontSize: 18, color: Colors.black),
                             decoration: InputDecoration(
-                              labelText: "Số điện thoại",
-                              labelStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xff5C6268),),
-                            errorText: snapshot.data
-                            ),
+                                labelText: "Số điện thoại",
+                                labelStyle: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff5C6268),
+                                ),
+                                errorText: snapshot.data),
                           );
-                        }
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
-                      child: Stack(
-                        alignment: AlignmentDirectional.centerEnd,
-                        children: [
-                          StreamBuilder<String>(
+                        }),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
+                    child: Stack(
+                      alignment: AlignmentDirectional.centerEnd,
+                      children: [
+                        StreamBuilder<String>(
                             stream: registerPresenter.codeStream,
                             builder: (context, snapshot) {
                               return TextFormField(
-                                controller:codeController,
-                                style: TextStyle(fontSize: 18, color: Colors.black),
+                                controller: codeController,
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.black),
                                 decoration: InputDecoration(
                                   labelText: "Mã đăng ký",
-                                  labelStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xff5C6268)),
-                                errorText: snapshot.data,
+                                  labelStyle: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff5C6268)),
+                                  errorText: snapshot.data,
                                 ),
                               );
                             }
@@ -164,67 +183,89 @@ class _BodyWidgetState extends State<BodyWidget> implements RegisterInterface {
                                 /*
                                
                                 */
-        
-                              }:null,
-                              child: Text("Đăng ký",
-                                style: TextStyle(fontSize: 24, color: Colors.white,),
+                                }
+                              : null,
+                          child: Text(
+                            "Đăng ký",
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.white,
+                            ),
+                          ),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                backgroundColor),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all<Color>(backgroundColor),
-                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),),
-                              ),
-                            );
-                          }
+                            ),
+                          ),
+                        );
+                      }),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        "Đã có tài khoản?",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color(0xffDC4A48),
+                          fontStyle: FontStyle.italic,
                         ),
-                      ),
-                      Container(
-                        alignment: Alignment.center,
-                        child: GestureDetector(
-                          onTap: (){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => LoginPage()),
-                          );
-                        },
-                          child: Text("Đã có tài khoản?", style: TextStyle(fontSize: 14, color: Color(0xffDC4A48), fontStyle: FontStyle.italic,),)),
-                      ),
-                    ],
-                  )
-              ),
-            ],
+                      )),
+                ),
+              ],
+            )),
+          ],
         ),
       ),
     );
   }
-  
 
   @override
   void registerSuccess() {
     // TODO: implement registerSucess
-    Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterSuccessPage()),);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => RegisterSuccessPage()),
+    );
   }
 
   Future<void> clickRegister(String name, String phone, String code) async {
-    bool validInfor=false;
-    validInfor=await registerPresenter.checkValidInfor(phone, code);
-    
-    if(validInfor){
-      String phoneNum=phoneController.text.toString().substring(1);
+    bool validInfor = false;
+    validInfor = await registerPresenter.checkValidInfor(phone, code);
+
+    if (validInfor) {
+      String phoneNum = phoneController.text.toString().substring(1);
 
       await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: '+84${phoneNum}',
-        verificationCompleted: (PhoneAuthCredential credential){}, 
-        verificationFailed: (FirebaseAuthException e){
+        verificationCompleted: (PhoneAuthCredential credential) {},
+        verificationFailed: (FirebaseAuthException e) {
           ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Xác thực thất bại: ${e.message}")) );
-        }, 
-        codeSent: (String verificationId,int?resendtoken){
-          Account newAccount= Account(nameController.text.toString(),phoneController.text.toString(),codeController.text.toString());
-          Navigator.push(context,MaterialPageRoute(builder: (context) => OTPPage(verify: verificationId,userAccount: newAccount,)),);
-        }, 
+              SnackBar(content: Text("Xác thực thất bại: ${e.message}")));
+        },
+        codeSent: (String verificationId, int? resendtoken) {
+          Account newAccount = Account(nameController.text.toString(),
+              phoneController.text.toString(), codeController.text.toString());
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => OTPPage(
+                      verify: verificationId,
+                      userAccount: newAccount,
+                    )),
+          );
+        },
         codeAutoRetrievalTimeout: (String verificationId) => {},
       );
-    }/*
+    } /*
     Account account= Account(name,phone,code);
     registerPresenter.register(account);*/
   }
@@ -233,14 +274,16 @@ class _BodyWidgetState extends State<BodyWidget> implements RegisterInterface {
   void registerError(dynamic error) {
     // TODO: implement registerError
     if (error is String) {
-        showDialog(context: context,
-            builder: (BuildContext context) {
-              return MyAlertDialog(content: error.toString());
-            },
-        );
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return MyAlertDialog(content: error.toString());
+        },
+      );
     }
   }
 }
+
 class MyAlertDialog extends StatelessWidget {
   final String content;
   MyAlertDialog({

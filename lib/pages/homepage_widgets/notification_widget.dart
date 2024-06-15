@@ -9,10 +9,18 @@ class NotificationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Color(0xffDC4A48),
+          automaticallyImplyLeading: false, //not showing button back
+          title: const Text(
+            "Lịch sử cảnh báo",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          )),
       body: BodyWidget(),
-    ) ;
+    );
   }
 }
+
 class BodyWidget extends StatefulWidget {
   const BodyWidget({super.key});
 
@@ -21,25 +29,24 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _MyBodyWidgetState extends State<BodyWidget> {
-  NotificationPresenter notificationPresenter=NotificationPresenter();
-  List<MyNotification> listNoti=[];
+  NotificationPresenter notificationPresenter = NotificationPresenter();
+  List<MyNotification> listNoti = [];
   bool isLoading = true; // Biến theo dõi tiến trình tải dữ liệu
   bool notHavingData = false; // Biến theo dõi du lieu tu DB
 
   Future<void> addData() async {
-    List<MyNotification> listNotiFromDB=await notificationPresenter.getListNotifications();
-     if(listNotiFromDB.isEmpty){
+    List<MyNotification> listNotiFromDB =
+        await notificationPresenter.getListNotifications();
+    if (listNotiFromDB.isEmpty) {
       setState(() {
-      isLoading = false; // tiến trình tải hoàn thành
-      notHavingData = true;
-    });
-    }
-    else{
-       setState(() {
+        isLoading = false; // tiến trình tải hoàn thành
+        notHavingData = true;
+      });
+    } else {
+      setState(() {
         listNoti.addAll(listNotiFromDB);
         isLoading = false; //tiến trình tải hoàn thành
       });
-      
     }
   }
 
@@ -52,47 +59,53 @@ class _MyBodyWidgetState extends State<BodyWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
-      body: isLoading
-      ? Center (child: CircularProgressIndicator())
-      : ( Scaffold(
-          body: notHavingData
-          ? Center(child: Text("Không có lịch sử cảnh báo",style:TextStyle(color: Colors.grey)))
-          : Container(
-            child: Column(
-              children: [
-                SizedBox(height: 40,),
-                Text("Lịch sử cảnh báo",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Color(0xffDC4A48)),),
-                Expanded(
-                      child: ListView.builder(
-                        itemCount:listNoti.length,
-                        itemBuilder: (context,index)=>getRow(index),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : (Scaffold(
+                body: notHavingData
+                    ? const Center(
+                        child: Text("Không có lịch sử cảnh báo",
+                            style: TextStyle(color: Colors.grey)))
+                    : Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Expanded(
+                          child: ListView.builder(
+                            itemCount: listNoti.length,
+                            itemBuilder: (context, index) => getRow(index),
+                          ),
+                        ),
                       ),
-                    )
-              ],
-              ),
-          ),
-        )
-      )
-    );
+              )));
   }
 
-   Widget getRow(int index){
+  Widget getRow(int index) {
     return Card(
       child: Container(
-       color: (Color(0xffFF8581)),
+        color: (Color(0xffFF8581)),
         child: ListTile(
-          leading: ImageIcon(AssetImage('assets/icons/bell.png'), size: 40,color: Colors.white,),
+          leading: ImageIcon(
+            AssetImage('assets/icons/bell.png'),
+            size: 40,
+            color: Colors.white,
+          ),
           title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(listNoti[index].alertBy + " đã gửi cảnh báo cháy", style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white),),
-                Text(listNoti[index].alertAt.toString(),style: TextStyle(fontSize: 15,color: Colors.white),),
-              ],
-            ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                listNoti[index].alertBy + " đã gửi cảnh báo cháy",
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              Text(
+                listNoti[index].alertAt.toString(),
+                style: TextStyle(fontSize: 15, color: Colors.white),
+              ),
+            ],
+          ),
+        ),
       ),
-      ),
-      
     );
   }
 }
