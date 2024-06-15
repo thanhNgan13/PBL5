@@ -1,13 +1,8 @@
 import 'package:fire_warning_app/component/OptionButton.dart';
-import 'package:fire_warning_app/pages/IoT/VDK_CK/cotrol_door_motor.dart';
-import 'package:fire_warning_app/pages/IoT/VDK_CK/home_page_vdk.dart';
+import 'package:fire_warning_app/pages/IoT/ESP8266/test.dart';
 import 'package:fire_warning_app/pages/IoT/VideoPages/VideoFromServer.dart';
 import 'package:fire_warning_app/pages/fire_fighting_knowledge_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
-import '../IoT/ESP32/view_status_fire.dart';
 import '../IoT/ESP8266/view_status_co.dart';
 
 class OptionWidget extends StatelessWidget {

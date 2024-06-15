@@ -17,7 +17,8 @@ class _MJPEGStreamState extends State<MJPEGStream> {
   late http.Response response;
   late http.Client client;
   late StreamController<Image> streamController;
-  final String URL_STREAM = 'http://192.168.154.96:8999/client/videos/Pbl50001';
+  final String URL_STREAM = 'http://192.168.2.46:8999/local/videos/Pbl50001';
+  final String URL_WEBSOCKET = 'wss://hrl4vkc2-8999.asse.devtunnels.ms/control';
 
   late InAppWebViewController webViewController;
 
@@ -32,11 +33,11 @@ class _MJPEGStreamState extends State<MJPEGStream> {
   @override
   void initState() {
     super.initState();
-    _connectToWebSocket(
-        socketUrl: 'wss://hrl4vkc2-8999.asse.devtunnels.ms/control');
+    _connectToWebSocket(socketUrl: URL_WEBSOCKET);
   }
 
   Future<void> _connectToWebSocket({required String socketUrl}) async {
+    if (!mounted) return;
     setState(() {
       isLoading = true;
     });
@@ -46,6 +47,7 @@ class _MJPEGStreamState extends State<MJPEGStream> {
       if (kDebugMode) {
         print('Connected to WebSocket server');
       }
+      if (!mounted) return;
       setState(() {
         socket = webSocket;
         isSocketConnected = true;
@@ -58,6 +60,7 @@ class _MJPEGStreamState extends State<MJPEGStream> {
       if (kDebugMode) {
         print('Failed to connect to WebSocket server: $e');
       }
+      if (!mounted) return;
       setState(() {
         isLoading = false;
         isSocketConnected = false;
@@ -98,15 +101,21 @@ class _MJPEGStreamState extends State<MJPEGStream> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Stream ESP32-CAM'),
-      ),
+          backgroundColor: Color(0xffDC4A48),
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+          ),
+          title: const Text(
+            "Camera",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          )),
       body: RefreshIndicator(
         onRefresh: _refresh,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Show a webview to display the video stream
             Expanded(
               child: Container(
                 child: isLoading
@@ -154,15 +163,19 @@ class _MJPEGStreamState extends State<MJPEGStream> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          _sendCommand("buzzer", {"action": "on"});
-                        },
+                        onPressed: isSocketConnected
+                            ? () {
+                                _sendCommand("buzzer", {"action": "on"});
+                              }
+                            : null,
                         child: const Text('Turn On Buzzer'),
                       ),
                       ElevatedButton(
-                        onPressed: () {
-                          _sendCommand("buzzer", {"action": "off"});
-                        },
+                        onPressed: isSocketConnected
+                            ? () {
+                                _sendCommand("buzzer", {"action": "off"});
+                              }
+                            : null,
                         child: const Text('Turn Off Buzzer'),
                       ),
                     ],
@@ -174,17 +187,17 @@ class _MJPEGStreamState extends State<MJPEGStream> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         IconButton(
-                          onPressed: pos >= 180
-                              ? null
-                              : () {
+                          onPressed: isSocketConnected && pos < 180
+                              ? () {
                                   setState(() {
-                                    pos += 10;
+                                    pos += 30;
                                     if (pos > 180) {
                                       pos = 180;
                                     }
                                     _sendCommand("servo", {"position": pos});
                                   });
-                                },
+                                }
+                              : null,
                           icon: const Icon(Icons.arrow_upward),
                           color: pos >= 180 ? Colors.grey : Colors.black,
                         ),
@@ -197,14 +210,14 @@ class _MJPEGStreamState extends State<MJPEGStream> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         IconButton(
-                          onPressed: steps <= -4096
-                              ? null
-                              : () {
+                          onPressed: isSocketConnected && steps > -4096
+                              ? () {
                                   setState(() {
                                     steps -= 256;
                                     _sendCommand("Stepper", {"step": -256});
                                   });
-                                },
+                                }
+                              : null,
                           icon: const Icon(Icons.arrow_back),
                           color: steps <= -4096 ? Colors.grey : Colors.black,
                         ),
@@ -218,23 +231,25 @@ class _MJPEGStreamState extends State<MJPEGStream> {
                                 : Colors.grey,
                           ),
                           iconSize: 50.0,
-                          onPressed: () {
-                            setState(() {
-                              isLightOn = !isLightOn;
-                              _sendCommand(
-                                  "light", {"state": isLightOn ? "on" : "off"});
-                            });
-                          },
+                          onPressed: isSocketConnected
+                              ? () {
+                                  setState(() {
+                                    isLightOn = !isLightOn;
+                                    _sendCommand("light",
+                                        {"state": isLightOn ? "on" : "off"});
+                                  });
+                                }
+                              : null,
                         ),
                         IconButton(
-                          onPressed: steps >= 4096
-                              ? null
-                              : () {
+                          onPressed: isSocketConnected && steps < 4096
+                              ? () {
                                   setState(() {
                                     steps += 256;
                                     _sendCommand("Stepper", {"step": 256});
                                   });
-                                },
+                                }
+                              : null,
                           icon: const Icon(Icons.arrow_forward),
                           color: steps >= 4096 ? Colors.grey : Colors.black,
                         ),
@@ -247,17 +262,17 @@ class _MJPEGStreamState extends State<MJPEGStream> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         IconButton(
-                          onPressed: pos <= 0
-                              ? null
-                              : () {
+                          onPressed: isSocketConnected && pos > 0
+                              ? () {
                                   setState(() {
-                                    pos -= 10;
+                                    pos -= 30;
                                     if (pos < 0) {
                                       pos = 0;
                                     }
                                     _sendCommand("servo", {"position": pos});
                                   });
-                                },
+                                }
+                              : null,
                           icon: const Icon(Icons.arrow_downward),
                           color: pos <= 0 ? Colors.grey : Colors.black,
                         ),

@@ -2,6 +2,7 @@ import 'package:fire_warning_app/presenters/contact_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../model/Contact.dart';
+
 class ContactWidget extends StatelessWidget {
   //final Account accountData;
   const ContactWidget({super.key});
@@ -9,10 +10,18 @@ class ContactWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Color(0xffDC4A48),
+          automaticallyImplyLeading: false, //not showing button back
+          title: const Text(
+            "Danh bạ",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          )),
       body: BodyWidget(),
-    ) ;
+    );
   }
 }
+
 class BodyWidget extends StatefulWidget {
   const BodyWidget({super.key});
 
@@ -21,22 +30,20 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
-  ContactPresenter contactPresenter=ContactPresenter();
-  List<Contact> listContact=[];
+  ContactPresenter contactPresenter = ContactPresenter();
+  List<Contact> listContact = [];
   bool isLoading = true; // Biến theo dõi tiến trình tải dữ liệu
-  
-  Future<void> addData()
-  async {
 
-    Contact contact0=Contact("Chữa cháy","114");
+  Future<void> addData() async {
+    Contact contact0 = Contact("Chữa cháy", "114");
     listContact.add(contact0);
 
-    List<Contact> listContactFromDB= await contactPresenter.getListContacts();
-    if(listContactFromDB.isNotEmpty){
-       setState(() {
-      listContact.addAll(listContactFromDB);
-      isLoading = false; //tiến trình tải hoàn thành
-    });
+    List<Contact> listContactFromDB = await contactPresenter.getListContacts();
+    if (listContactFromDB.isNotEmpty) {
+      setState(() {
+        listContact.addAll(listContactFromDB);
+        isLoading = false; //tiến trình tải hoàn thành
+      });
     }
   }
 
@@ -45,47 +52,27 @@ class _BodyWidgetState extends State<BodyWidget> {
     super.initState();
     addData();
   }
-  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: isLoading 
-      ? Center (child: CircularProgressIndicator())
-      :Container(
-        child: Column(
-            children: [
-              SizedBox(height: 40,),
-              Text("Danh sách thành viên",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Color(0xffDC4A48)),),
-              /*
-              Row(
-                children: [
-                  IconButton(onPressed: (){
-                  },
-                      icon: Image.asset("assets/icons/add.png"),
-                  ),
-                  Text("Thêm liên hệ mới",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Color(0xffDC4A48)),)
-                ],
-              ),
-              */
-              Expanded(
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.all(10.0),
                 child: ListView.builder(
-                  itemCount:listContact.length,
-                  itemBuilder: (context,index)=>getRow(index),
+                  itemCount: listContact.length,
+                  itemBuilder: (context, index) => getRow(index),
                 ),
-              )
-            ]
-        ),
-      )
-
-    );
+              ));
   }
-  Widget getRow(int index){
+
+  Widget getRow(int index) {
     return Card(
       child: ListTile(
-        onTap: (){
-          String phoneNumber="";
-          phoneNumber=listContact[index].phone.toString();
+        onTap: () {
+          String phoneNumber = "";
+          phoneNumber = listContact[index].phone.toString();
           launch('tel:$phoneNumber');
         },
         leading: CircleAvatar(
@@ -94,15 +81,13 @@ class _BodyWidgetState extends State<BodyWidget> {
           foregroundColor: Colors.white,
         ),
         title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(listContact[index].name),
-                Text(listContact[index].phone),
-              ],
-            ),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(listContact[index].name),
+            Text(listContact[index].phone),
+          ],
+        ),
       ),
     );
   }
 }
-
-
