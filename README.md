@@ -1,8 +1,9 @@
-## Overview
+![PBL5 - Final report](https://github.com/thanhNgan13/PBL5/assets/89728233/3524a60e-6a67-4a7c-bccd-e64c0d1a7e96)## Overview
 
 The project "Fire Alarm System for Households" aims to detect and promptly alert in the event of a fire at the household level, in order to minimize loss of life and property. This project requires a combination of hardware and software, integrating AI technology to build an intelligent IoT system that ensures quick detection and alerts when there are signs of a fire. Our team has applied AI technology in combination with cameras to analyze and identify fire and smoke, while also integrating smoke sensors to enhance detection capabilities and prevent risks in case the camera fails. When the system detects smoke or fire, alerts will automatically be sent to the mobile application, allowing users to receive information and respond in a timely manner. As a result, we have successfully built an effective, automatic, and reliable fire monitoring and alert system, improving safety and reducing risks in monitored areas.
 
-![plot](overview.png)
+![PBL5 - Final report](https://github.com/thanhNgan13/PBL5/assets/89728233/85dc5260-67e0-4f9a-9d71-a3cfe7a20b90)
+
 
 ## Issues to Address
 
