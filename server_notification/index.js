@@ -127,8 +127,8 @@ function periodicallyCheckAndAlert() {
   });
 }
 
-// Đặt hàm kiểm tra định kỳ mỗi 10 phút
-setInterval(periodicallyCheckAndAlert, 10 * 60 * 1000);
+// // Đặt hàm kiểm tra định kỳ mỗi 10 phút
+// setInterval(periodicallyCheckAndAlert, 10 * 60 * 1000);
 
 function sendAlert(userId, token) {
   console.log(`token: ${token}`);
@@ -159,6 +159,6 @@ function sendAlert(userId, token) {
 }
 
 app.listen(7777, function () {
-  setInterval(periodicallyCheckAndAlert, 20 * 1000); // 10 phút
+  setInterval(periodicallyCheckAndAlert, 15 * 1000); // 10 phút
   console.log("Server started on port 7777");
 });
