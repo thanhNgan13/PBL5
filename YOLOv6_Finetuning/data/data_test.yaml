@@ -1,0 +1,6 @@
+train: ../Fire-Detection-1/images/train
+val: ../Fire-Detection-1/images/valid
+test: ../Fire-Detection-1/images/test
+
+nc: 1
+names: ['fire']
